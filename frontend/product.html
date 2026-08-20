@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/brand/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Product — Grip On</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="css/style.css">
+    <meta property="og:title" content="Grip On — Gym Wear Built to Hold">
+    <meta property="og:description" content="Training wear made for the lifts that matter.">
+    <meta property="og:image" content="images/brand/hero.jpg">
+    <meta property="og:type" content="website">
+    <style>
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            padding-block: 3rem 5rem;
+        }
+        
+        .product-media {
+            aspect-ratio: 4/5;
+            background: var(--ash);
+            border: 1px solid var(--line);
+        }
+        
+        .product-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .product-info .eyebrow {
+            margin-bottom: 0.75rem;
+        }
+        
+        .product-info h1 {
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            margin-bottom: 0.75rem;
+            text-transform: none;
+        }
+        
+        .product-info .price {
+            font-size: 1.4rem;
+            color: var(--grip-blue);
+            display: block;
+            margin-bottom: 1.5rem;
+        }
+        
+        .option-group {
+            margin-bottom: 1.75rem;
+        }
+        
+        .option-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--steel);
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+        
+        .size-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .size-btn {
+            border: 1px solid var(--line);
+            padding: 0.55rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        
+        .size-btn.active {
+            border-color: var(--grip-blue);
+            color: var(--grip-blue);
+        }
+        
+        .qty-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .qty-row button {
+            border: 1px solid var(--line);
+            width: 2.25rem;
+            height: 2.25rem;
+            font-family: var(--font-mono);
+        }
+        
+        .add-confirm {
+            margin-top: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--grip-blue);
+            display: none;
+        }
+        
+        @media (max-width: 760px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="wrap nav">
+            <a href="index.html" class="nav-logo">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="84" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="16" y="33" width="68" height="4" fill="currentColor"/>
+        <path d="M38 37 L38 45 C38 55 34 58 30 62 C26 66 26 72 26 78 L26 90 L74 90 L74 78 C74 72 74 66 70 62 C66 58 62 55 62 45 L62 37 Z" fill="currentColor"/>
+        <path d="M45 60 L45 78 M55 60 L55 78" stroke="var(--void)" stroke-width="3"/>
+      </svg> Grip On
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="shop.html" aria-current="page">Shop</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-link">Cart<span class="cart-count" id="cartCount">0</span></a>
+                <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <div class="product-detail" id="productDetail"></div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="wrap">
+            <div class="footer-bottom">
+                <span>&copy; 2026 Grip On</span>
+                <span>Johannesburg, South Africa</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        const id = new URLSearchParams(location.search).get('id');
+        const product = findProduct(id);
+        const detail = document.getElementById('productDetail');
+
+        if (!product) {
+            detail.innerHTML = `<p style="grid-column:1/-1; padding-block:4rem; text-align:center; color:var(--steel);">
+      Product not found. <a href="shop.html" style="color:var(--grip-blue);">Back to shop</a></p>`;
+        } else {
+            document.getElementById('pageTitle').textContent = `${product.name} — Grip On`;
+            const sizes = ["S", "M", "L", "XL"];
+            let selectedSize = "M";
+            let qty = 1;
+
+            detail.innerHTML = `
+      <div class="product-media">
+        <img src="${product.image}" alt="${product.name} — ${product.colour}"
+             onerror="this.replaceWith(Object.assign(document.createElement('div'), {
+               className: 'placeholder-media',
+               innerHTML: '<span>${product.colour} — image pending</span>'
+             }))">
+      </div>
+      <div class="product-info">
+        <span class="eyebrow">${product.category} · ${product.colour}</span>
+        <h1>${product.name}</h1>
+        <span class="price">R${product.price}</span>
+
+        <div class="option-group">
+            <span class="option-label">Size <a href="#" id="sizeGuideLink" style="color: var(--grip-blue); text-transform: none; font-family: var(--font-body); font-weight: 500;">— Size guide</a></span>
+            <div class="size-options" id="sizeOptions">
+            ${sizes.map(s => `<button class="size-btn${s === selectedSize ? ' active' : ''}" data-size="${s}">${s}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="qty-row">
+          <span class="option-label" style="margin:0;">Qty</span>
+          <button id="qtyMinus">−</button>
+          <span id="qtyValue">1</span>
+          <button id="qtyPlus">+</button>
+        </div>
+
+        <button class="btn btn-primary" id="addToCartBtn">Add to cart</button>
+        <div class="add-confirm" id="addConfirm">Added to cart.</div>
+      </div>
+    `;
+
+    document.querySelector('meta[name="description"]').setAttribute('content', `${product.name} in ${product.colour} — R${product.price}. Shop Grip On gym wear.`);
+    
+
+    document.getElementById('sizeOptions').addEventListener('click', e => {
+      if (!e.target.matches('.size-btn')) return;
+      selectedSize = e.target.dataset.size;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b === e.target));
+    });
+
+    document.getElementById('qtyPlus').addEventListener('click', () => {
+      qty++; document.getElementById('qtyValue').textContent = qty;
+    });
+    document.getElementById('qtyMinus').addEventListener('click', () => {
+      qty = Math.max(1, qty - 1); document.getElementById('qtyValue').textContent = qty;
+    });
+
+    document.getElementById('addToCartBtn').addEventListener('click', () => {
+        addToCart(product.id, selectedSize, qty);
+        showToast(`Added ${product.name} to cart`);
+    });
+  }
+    </script>
+
+</body>
+
+
+</html>

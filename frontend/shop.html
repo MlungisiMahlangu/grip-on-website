@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/brand/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop All — Grip On Gym Wear</title>
+    <meta name="description" content="Browse Grip On's full range: tees, vests, hoodies, joggers, tights and accessories.">
+    <link rel="stylesheet" href="css/style.css">
+    <meta property="og:title" content="Grip On — Gym Wear Built to Hold">
+    <meta property="og:description" content="Training wear made for the lifts that matter.">
+    <meta property="og:image" content="images/brand/hero.jpg">
+    <meta property="og:type" content="website">
+    <style>
+        .shop-head {
+            padding-block: 3rem 2rem;
+        }
+        
+        .shop-filters {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--line);
+        }
+        
+        .shop-filters select {
+            background: var(--ash);
+            color: var(--chalk);
+            border: 1px solid var(--line);
+            padding: 0.6rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .shop-count {
+            color: var(--steel);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding-block: 5rem;
+            color: var(--steel);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="wrap nav">
+            <a href="index.html" class="nav-logo">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="84" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="16" y="33" width="68" height="4" fill="currentColor"/>
+        <path d="M38 37 L38 45 C38 55 34 58 30 62 C26 66 26 72 26 78 L26 90 L74 90 L74 78 C74 72 74 66 70 62 C66 58 62 55 62 45 L62 37 Z" fill="currentColor"/>
+        <path d="M45 60 L45 78 M55 60 L55 78" stroke="var(--void)" stroke-width="3"/>
+      </svg> Grip On
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="shop.html" aria-current="page">Shop</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-link">Cart<span class="cart-count" id="cartCount">0</span></a>
+                <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <div class="shop-head">
+            <span class="eyebrow">Full range</span>
+            <h1 style="font-size: clamp(2rem, 5vw, 3.5rem);">Shop</h1>
+        </div>
+
+        <div class="shop-filters">
+            <select id="categoryFilter" aria-label="Filter by category">
+      <option value="all">All categories</option>
+    </select>
+            <select id="sortFilter" aria-label="Sort products">
+      <option value="default">Sort: Default</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="price-desc">Price: High to Low</option>
+    </select>
+            <span class="shop-count" id="shopCount"></span>
+        </div>
+
+        <div class="product-grid" id="shopGrid"></div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="wrap">
+            <div class="footer-grid">
+                <div>
+                    <h4>Grip On</h4>
+                    <p>Gym wear built to hold. Designed and tested by people who actually train.</p>
+                </div>
+                <div>
+                    <h4>Shop</h4>
+                    <a href="shop.html">All products</a>
+                    <a href="shop.html">Shirts</a>
+                    <a href="shop.html">Hoodies</a>
+                    <a href="shop.html">Accessories</a>
+                </div>
+                <div>
+                    <h4>Info</h4>
+                    <a href="about.html">About</a>
+                    <a href="contact.html">Contact</a>
+                    <a href="cart.html">Cart</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Grip On</span>
+                <span>Johannesburg, South Africa</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        const params = new URLSearchParams(location.search);
+        const catFilter = document.getElementById('categoryFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const grid = document.getElementById('shopGrid');
+        const countEl = document.getElementById('shopCount');
+
+        const cats = [...new Set(products.map(p => p.category))];
+        catFilter.innerHTML += cats.map(c => `<option value="${c}">${c}</option>`).join('');
+        if (params.get('category')) catFilter.value = params.get('category');
+
+        function render() {
+            let list = products.filter(p => catFilter.value === 'all' || p.category === catFilter.value);
+            if (sortFilter.value === 'price-asc') list = [...list].sort((a, b) => a.price - b.price);
+            if (sortFilter.value === 'price-desc') list = [...list].sort((a, b) => b.price - a.price);
+
+            countEl.textContent = `${list.length} item${list.length !== 1 ? 's' : ''}`;
+            grid.innerHTML = list.length ?
+                list.map(renderProductCard).join('') :
+                `<div class="empty-state" style="grid-column: 1/-1;">Nothing here yet - check another category.</div>`;
+        }
+
+        catFilter.addEventListener('change', render);
+        sortFilter.addEventListener('change', render);
+        render();
+    </script>
+
+</body>
+
+</html>

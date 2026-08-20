@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/brand/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact — Grip On</title>
+    <meta name="description" content="Get in touch with Grip On for orders, sizing questions, or wholesale enquiries.">
+    <link rel="stylesheet" href="css/style.css">
+    <meta property="og:title" content="Grip On — Gym Wear Built to Hold">
+    <meta property="og:description" content="Training wear made for the lifts that matter.">
+    <meta property="og:image" content="images/brand/hero.jpg">
+    <meta property="og:type" content="website">
+    <style>
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            padding-block: 4rem 6rem;
+        }
+        
+        .contact-info p {
+            color: var(--steel);
+            margin-top: 1rem;
+            max-width: 34ch;
+        }
+        
+        .contact-detail {
+            margin-top: 2rem;
+        }
+        
+        .contact-detail h4 {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--steel);
+            margin-bottom: 0.4rem;
+        }
+        
+        .field {
+            margin-bottom: 1.25rem;
+        }
+        
+        .field label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--steel);
+            margin-bottom: 0.5rem;
+        }
+        
+        .field input,
+        .field textarea {
+            width: 100%;
+            background: var(--ash);
+            border: 1px solid var(--line);
+            color: var(--chalk);
+            padding: 0.85rem 1rem;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+        }
+        
+        .field textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-note {
+            display: none;
+            margin-top: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--grip-blue);
+        }
+        
+        @media (max-width: 760px) {
+            .contact-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="wrap nav">
+            <a href="index.html" class="nav-logo">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="84" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="16" y="33" width="68" height="4" fill="currentColor"/>
+        <path d="M38 37 L38 45 C38 55 34 58 30 62 C26 66 26 72 26 78 L26 90 L74 90 L74 78 C74 72 74 66 70 62 C66 58 62 55 62 45 L62 37 Z" fill="currentColor"/>
+        <path d="M45 60 L45 78 M55 60 L55 78" stroke="var(--void)" stroke-width="3"/>
+      </svg> Grip On
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="about.html">About</a>
+                <a href="contact.html" aria-current="page">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-link">Cart<span class="cart-count" id="cartCount">0</span></a>
+                <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <div class="contact-layout">
+            <div class="contact-info">
+                <span class="eyebrow">Get in touch</span>
+                <h1 style="font-size: clamp(2rem, 5vw, 3rem); margin-top: 0.75rem;">Questions, orders, wholesale.</h1>
+                <p>Reach out about sizing, bulk orders for gyms and teams, or anything else. We reply within a day.</p>
+                <div class="contact-detail">
+                    <h4>Email</h4>
+                    <span>hello@griponwear.co.za</span>
+                </div>
+                <div class="contact-detail">
+                    <h4>Based in</h4>
+                    <span>Johannesburg, South Africa</span>
+                </div>
+            </div>
+
+            <div>
+                <form id="contactForm">
+                    <div class="field">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="field">
+                        <label for="message">Message</label>
+                        <textarea id="message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send message</button>
+                    <div class="form-note" id="formNote">Thanks , this form isn't wired up to an inbox yet, but the layout's ready for when the backend is.</div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="wrap">
+            <div class="footer-bottom">
+                <span>&copy; 2026 Grip On</span>
+                <span>Johannesburg, South Africa</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('formNote').style.display = 'block';
+            e.target.reset();
+        });
+    </script>
+</body>
+
+</html>

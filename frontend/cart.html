@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/brand/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart — Grip On</title>
+    <meta name="description" content="Review your Grip On order before checkout.">
+    <link rel="stylesheet" href="css/style.css">
+    <meta property="og:title" content="Grip On — Gym Wear Built to Hold">
+    <meta property="og:description" content="Training wear made for the lifts that matter.">
+    <meta property="og:image" content="images/brand/hero.jpg">
+    <meta property="og:type" content="website">
+    <style>
+        .cart-page {
+            padding-block: 3rem 5rem;
+        }
+        
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .cart-row {
+            display: grid;
+            grid-template-columns: 90px 1fr auto auto;
+            gap: 1.25rem;
+            align-items: center;
+            padding-block: 1.25rem;
+            border-bottom: 1px solid var(--line);
+        }
+        
+        .cart-row-media {
+            width: 90px;
+            height: 100px;
+            background: var(--ash);
+            border: 1px solid var(--line);
+        }
+        
+        .cart-row-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .cart-row-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .cart-row-meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--steel);
+        }
+        
+        .cart-row-qty {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        
+        .cart-row-qty button {
+            border: 1px solid var(--line);
+            width: 2.25rem;
+            height: 2.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+        }
+        
+        .cart-row-remove {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--steel);
+            text-transform: uppercase;
+        }
+        
+        .cart-row-remove:hover {
+            color: var(--grip-blue);
+        }
+        
+        .summary {
+            background: var(--ash);
+            border: 1px solid var(--line);
+            padding: 1.75rem;
+        }
+        
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--steel);
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--line);
+        }
+        
+        .summary .btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        
+        .checkout-form {
+            margin-top: 1.5rem;
+        }
+        
+        .checkout-form .field {
+            margin-bottom: 1rem;
+        }
+        
+        .checkout-form label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--steel);
+            margin-bottom: 0.5rem;
+        }
+        
+        .checkout-form input,
+        .checkout-form textarea {
+            width: 100%;
+            background: var(--void);
+            border: 1px solid var(--line);
+            color: var(--chalk);
+            padding: 0.7rem 0.9rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+        }
+        
+        .checkout-form textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+        
+        .field-error {
+            color: #ff5c5c;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            margin-top: 0.6rem;
+            display: none;
+        }
+        
+        @media (max-width: 760px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+            .cart-row {
+                display: grid;
+                grid-template-columns: 70px 1fr;
+                grid-template-areas: "media info" "media price" "media remove";
+                row-gap: 0.6rem;
+                align-items: start;
+            }
+            .cart-row-media {
+                grid-area: media;
+                width: 70px;
+                height: 80px;
+            }
+            .cart-row>div:nth-child(2) {
+                grid-area: info;
+            }
+            .cart-row .price {
+                grid-area: price;
+            }
+            .cart-row-remove {
+                grid-area: remove;
+                justify-self: start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="wrap nav">
+            <a href="index.html" class="nav-logo">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="84" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="16" y="33" width="68" height="4" fill="currentColor"/>
+        <path d="M38 37 L38 45 C38 55 34 58 30 62 C26 66 26 72 26 78 L26 90 L74 90 L74 78 C74 72 74 66 70 62 C66 58 62 55 62 45 L62 37 Z" fill="currentColor"/>
+        <path d="M45 60 L45 78 M55 60 L55 78" stroke="var(--void)" stroke-width="3"/>
+      </svg> Grip On
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-link" aria-current="page">Cart<span class="cart-count" id="cartCount">0</span></a>
+                <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap cart-page">
+        <span class="eyebrow">Review</span>
+        <h1 style="font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 2rem;">Your cart</h1>
+        <div id="cartContent"></div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="wrap">
+            <div class="footer-bottom">
+                <span>&copy; 2026 Grip On</span>
+                <span>Johannesburg, South Africa</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function buildWhatsAppMessage(name, address) {
+            const cart = getCart();
+            let message = `Hi Grip On! I'd like to order:\n\n`;
+
+            cart.forEach(item => {
+                const p = findProduct(item.id);
+                if (p) message += `• ${p.name} (${p.colour}, Size ${item.size}) x${item.qty} — R${p.price * item.qty}\n`;
+            });
+
+            message += `\nTotal: R${cartTotal()}`;
+            message += `\n\nName: ${name}`;
+            message += `\nDelivery address: ${address}`;
+
+            return encodeURIComponent(message);
+        }
+
+        function renderCart() {
+            const cart = getCart();
+            const content = document.getElementById('cartContent');
+
+            if (!cart.length) {
+                content.innerHTML = `
+        <div style="text-align:center; padding-block:4rem; color: var(--steel);">
+          <p style="margin-bottom:1.5rem;">Your cart is empty.</p>
+          <a href="shop.html" class="btn btn-primary">Start shopping</a>
+        </div>`;
+                return;
+            }
+
+            const rows = cart.map(item => {
+                const p = findProduct(item.id);
+                if (!p) return '';
+                return `
+        <div class="cart-row">
+          <div class="cart-row-media">
+            <img src="${p.image}" alt="${p.name}" onerror="this.style.display='none'">
+          </div>
+          <div>
+            <div class="cart-row-name">${p.name}</div>
+            <div class="cart-row-meta">${p.colour} · Size ${item.size} · R${p.price}</div>
+            <div class="cart-row-qty" style="margin-top:0.5rem;">
+              <button data-action="minus" data-id="${item.id}" data-size="${item.size}">−</button>
+              <span>${item.qty}</span>
+              <button data-action="plus" data-id="${item.id}" data-size="${item.size}">+</button>
+            </div>
+          </div>
+          <div class="price">R${p.price * item.qty}</div>
+          <button class="cart-row-remove" data-action="remove" data-id="${item.id}" data-size="${item.size}">Remove</button>
+        </div>`;
+            }).join('');
+
+            const total = cartTotal();
+
+            content.innerHTML = `
+      <div class="cart-layout">
+        <div id="cartRows">${rows}</div>
+        <div class="summary">
+          <div class="summary-line"><span>Subtotal</span><span>R${total}</span></div>
+          <div class="summary-line"><span>Shipping</span><span>Calculated at checkout</span></div>
+          <div class="summary-total"><span>Total</span><span class="price">R${total}</span></div>
+
+          <div class="checkout-form" id="checkoutForm">
+            <div class="field">
+                <label for="custName">Full name</label>
+                <input type="text" id="custName" required>
+            </div>
+            <div class="field">
+                <label for="custAddress">Delivery address</label>
+                <textarea id="custAddress" required placeholder="Street, suburb, city"></textarea>
+            </div>
+            <button class="btn btn-primary" id="checkoutBtn" type="button">Checkout via WhatsApp</button>
+            <div class="field-error" id="checkoutError"></div>
+          </div>
+        </div>
+      </div>`;
+
+            content.querySelectorAll('[data-action]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const {
+                        action,
+                        id,
+                        size
+                    } = btn.dataset;
+                    const numId = Number(id);
+                    if (action === 'remove') {
+                        removeFromCart(numId, size);
+                        showToast('Removed from cart');
+                    }
+                    if (action === 'plus' || action === 'minus') {
+                        const item = getCart().find(i => i.id === numId && i.size === size);
+                        if (item) updateQty(numId, size, action === 'plus' ? item.qty + 1 : item.qty - 1);
+                    }
+                    renderCart();
+                });
+            });
+
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            checkoutBtn.addEventListener('click', () => {
+                const name = document.getElementById('custName').value.trim();
+                const address = document.getElementById('custAddress').value.trim();
+                const errorEl = document.getElementById('checkoutError');
+
+                if (!name || !address) {
+                    errorEl.textContent = 'Please fill in your name and delivery address.';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+                errorEl.style.display = 'none';
+
+                const url = `https://wa.me/${BRAND_WHATSAPP}?text=${buildWhatsAppMessage(name, address)}`;
+                window.open(url, '_blank');
+            });
+        }
+
+        renderCart();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="images/brand/favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Grip On</title>
+    <meta name="description" content="Grip On is gym wear made by people who train. Learn the story behind the brand.">
+    <link rel="stylesheet" href="css/style.css">
+    <meta property="og:title" content="Grip On — Gym Wear Built to Hold">
+    <meta property="og:description" content="Training wear made for the lifts that matter.">
+    <meta property="og:image" content="images/brand/hero.jpg">
+    <meta property="og:type" content="website">
+    <style>
+        .about-hero {
+            padding-block: 4rem 3rem;
+            max-width: 46ch;
+        }
+        
+        .about-hero p {
+            color: var(--steel);
+            margin-top: 1rem;
+            font-size: 1.05rem;
+        }
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            padding-block: 2rem 5rem;
+        }
+        
+        .about-media {
+            aspect-ratio: 4/5;
+            background: var(--ash);
+            border: 1px solid var(--line);
+        }
+        
+        .about-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .value-list {
+            display: grid;
+            gap: 1.5rem;
+            padding-block: 2rem 5rem;
+        }
+        
+        .value-item {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 1.25rem;
+            padding-block: 1.5rem;
+            border-top: 1px solid var(--line);
+        }
+        
+        .value-item:last-child {
+            border-bottom: 1px solid var(--line);
+        }
+        
+        .value-num {
+            font-family: var(--font-mono);
+            color: var(--grip-blue);
+        }
+        
+        @media (max-width: 760px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="wrap nav">
+            <a href="index.html" class="nav-logo">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="84" y="30" width="6" height="10" fill="currentColor"/>
+        <rect x="16" y="33" width="68" height="4" fill="currentColor"/>
+        <path d="M38 37 L38 45 C38 55 34 58 30 62 C26 66 26 72 26 78 L26 90 L74 90 L74 78 C74 72 74 66 70 62 C66 58 62 55 62 45 L62 37 Z" fill="currentColor"/>
+        <path d="M45 60 L45 78 M55 60 L55 78" stroke="var(--void)" stroke-width="3"/>
+      </svg> Grip On
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="about.html" aria-current="page">About</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="cart.html" class="cart-link">Cart<span class="cart-count" id="cartCount">0</span></a>
+                <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks">Menu</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <div class="about-hero">
+            <span class="eyebrow">About Grip On</span>
+            <h1 style="font-size: clamp(2rem, 5vw, 3.25rem); margin-top: 0.75rem;">Made by people who train.</h1>
+            <p>Grip On started on a gym floor, not a design board. We make training wear for the moment your hands start to slip and your form is the only thing keeping the set alive.</p>
+        </div>
+
+        <div class="about-grid">
+            <div class="about-media">
+                <div class="placeholder-media">
+                    <img src="images/brand/Brand1.jpg" alt="Brand / workshop photo">
+                </div>
+            </div>
+            <div>
+                <span class="eyebrow">The idea</span>
+                <h2 style="font-size: 1.75rem; margin: 0.75rem 0 1rem;">No noise. Just gear that holds.</h2>
+                <p style="color: var(--steel); line-height: 1.7;">
+                    Every Grip On piece is built around one question: does this help the lift, or is it just decoration? That's why the range stays simple, heavyweight cotton for the Tshirts, real compression for the tights, and a logo you'll actually want to wear outside
+                    the gym too.
+                </p>
+            </div>
+        </div>
+
+        <div class="value-list">
+            <div class="value-item">
+                <span class="value-num">01</span>
+                <div>
+                    <h3 style="font-size:1.05rem; text-transform:none; font-family:var(--font-body); font-weight:600;">Tested under load</h3>
+                    <p style="color:var(--steel); margin-top:0.4rem;">Every fabric is worn through real training blocks before it goes on the site, not just modeled.</p>
+                </div>
+            </div>
+            <div class="value-item">
+                <span class="value-num">02</span>
+                <div>
+                    <h3 style="font-size:1.05rem; text-transform:none; font-family:var(--font-body); font-weight:600;">Built to last seasons, not sets</h3>
+                    <p style="color:var(--steel); margin-top:0.4rem;">Stitching and fabric weight chosen for years of washes, not just good first impressions.</p>
+                </div>
+            </div>
+            <div class="value-item">
+                <span class="value-num">03</span>
+                <div>
+                    <h3 style="font-size:1.05rem; text-transform:none; font-family:var(--font-body); font-weight:600;">Small batch, on purpose</h3>
+                    <p style="color:var(--steel); margin-top:0.4rem;">We'd rather sell out of a colourway than compromise on the fabric to keep it always in stock.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="wrap">
+            <div class="footer-bottom">
+                <span>&copy; 2026 Grip On</span>
+                <span>Johannesburg, South Africa</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
