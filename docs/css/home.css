@@ -198,14 +198,16 @@ section {
 /* Art-directed campaign panels */
 .hero-bg-type span { color: rgba(245,244,237,.055); font-size: clamp(5rem, 19vw, 16rem); }
 .hero-copy { max-width: 660px; }
-.hero-copy h1 { font-size: clamp(3.5rem, 9vw, 8rem); letter-spacing: -.035em; }
-.hero-copy p { color: rgba(245,244,237,.78); }
-.hero-media { background: rgba(20,25,24,.55); border-color: rgba(197,255,61,.24); backdrop-filter: blur(2px); }
+.hero-copy h1 { font-size: clamp(3.5rem, 9vw, 8rem); letter-spacing: -.055em; max-width: 8ch; }
+.hero-copy p { color: rgba(245,244,237,.78); font-size: 1.08rem; line-height: 1.7; }
+.hero-media { background: rgba(20,25,24,.55); border-color: rgba(197,255,61,.4); border-radius: 18px; backdrop-filter: blur(2px); box-shadow: 18px 18px 0 rgba(197,255,61,.08); }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: screen; opacity: .9; }
 .category-chip { border-radius: 999px; }
-.statement { background: linear-gradient(135deg, var(--ash), #0f1312); }
+.category-chip:first-child { background: var(--grip-blue); color: var(--void); border-color: var(--grip-blue); }
+.statement { background: linear-gradient(135deg, var(--ash), #0f1312); padding-block: 7rem; }
 .statement-icon { color: var(--grip-blue); }
-.feature-panel { overflow: hidden; background-size: cover; background-position: center; }
+.statement h2 { font-size: clamp(2.3rem, 5vw, 4rem); }
+.feature-panel { overflow: hidden; background-size: cover; background-position: center; border-radius: 18px; min-height: 430px; }
 .feature-panel::before { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(11,13,13,.94), rgba(11,13,13,.04) 70%); }
 .feature-panel:first-child { background-image: url('../images/brand/hero2.jpg'); }
 .feature-panel:last-child { background-image: url('../images/brand/Brand1.jpg'); }
@@ -214,4 +216,5 @@ section {
 @media (max-width: 860px) {
     .hero { background-position: 62% center; }
     .hero-copy h1 { font-size: clamp(3.25rem, 14vw, 6rem); }
+    .hero-media { box-shadow: 10px 10px 0 rgba(197,255,61,.08); }
 }

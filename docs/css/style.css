@@ -919,3 +919,53 @@ input, textarea, select { border-radius: var(--radius); }
 @media (prefers-reduced-motion: no-preference) {
     .product-card, .feature-panel, .btn { transition: transform .3s var(--ease-out-expo), border-color .3s ease, box-shadow .3s ease, background .3s ease; }
 }
+
+/* Editorial performance layer */
+body {
+    background-color: var(--void);
+    background-image: linear-gradient(rgba(197,255,61,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(197,255,61,.025) 1px, transparent 1px), radial-gradient(circle at 12% 0%, rgba(197,255,61,.1), transparent 24rem);
+    background-size: 64px 64px, 64px 64px, auto;
+}
+
+.site-header {
+    border-bottom: 1px solid rgba(245,244,237,.12);
+    box-shadow: 0 12px 40px rgba(0,0,0,.14);
+}
+
+.nav { min-height: 74px; }
+.nav-logo { font-size: 1.25rem; }
+.nav-logo svg { width: 30px; height: 30px; }
+.nav-links a { padding-block: .35rem; }
+.cart-link { border: 1px solid rgba(245,244,237,.15); border-radius: 999px; padding: .55rem .85rem; transition: border-color .2s ease, color .2s ease, background .2s ease; }
+.cart-link:hover { border-color: var(--grip-blue); background: rgba(197,255,61,.08); }
+
+main > .wrap, main > section { position: relative; }
+section { padding-block: 2rem 7rem; }
+.section-head { margin-bottom: 2.25rem; }
+.section-head h2 { letter-spacing: -.02em; }
+
+.btn { min-height: 48px; }
+.btn-primary { box-shadow: 0 0 0 1px rgba(197,255,61,.3), 0 12px 30px rgba(197,255,61,.1); }
+
+.product-grid { gap: 1.15rem; }
+.product-card { border-radius: 14px; }
+.product-card-media { aspect-ratio: 1 / 1.12; }
+.product-card-body { padding: 1.15rem 1.2rem 1.35rem; }
+.product-card-name { letter-spacing: -.02em; }
+.product-badge { border-radius: 999px; }
+
+.site-footer { margin-top: 3rem; padding-block: 5rem 2rem; }
+.footer-grid { grid-template-columns: 1.8fr 1fr 1fr 1fr; }
+.footer-grid > div:first-child { max-width: 22rem; }
+.footer-grid h4 { color: var(--grip-blue); }
+.footer-bottom { margin-top: 4rem; }
+
+@media (max-width: 760px) {
+    .nav { min-height: 64px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .cart-link { padding: .45rem .65rem; }
+}
