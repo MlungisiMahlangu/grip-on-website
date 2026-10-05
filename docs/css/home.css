@@ -60,9 +60,15 @@
 }
 
 .hero-media {
-    aspect-ratio: 3 / 4;
     background: var(--ash);
     border: 1px solid var(--line);
+    overflow: hidden;
+}
+
+.hero-media img {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 @media (max-width: 860px) {
@@ -71,7 +77,6 @@
     }
     .hero-media {
         order: -1;
-        aspect-ratio: 4 / 3;
     }
     .hero {
         min-height: auto;
