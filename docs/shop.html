@@ -27,6 +27,41 @@
             border-bottom: 1px solid var(--line);
         }
         
+        .shop-search {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        
+        .shop-search input {
+            width: 100%;
+            background: var(--ash);
+            color: var(--chalk);
+            border: 1px solid var(--line);
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            border-radius: var(--radius);
+            transition: all var(--transition-fast);
+        }
+        
+        .shop-search input:focus {
+            outline: none;
+            border-color: var(--grip-blue);
+            box-shadow: 0 0 0 3px var(--grip-blue-glow);
+        }
+        
+        .shop-search svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--steel);
+            pointer-events: none;
+        }
+        
         .shop-filters select {
             background: var(--ash);
             color: var(--chalk);
@@ -36,6 +71,18 @@
             font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .shop-filters select:hover {
+            border-color: var(--grip-blue);
+        }
+        
+        .shop-filters select:focus {
+            outline: none;
+            border-color: var(--grip-blue);
+            box-shadow: 0 0 0 3px var(--grip-blue-glow);
         }
         
         .shop-count {
@@ -49,6 +96,14 @@
             text-align: center;
             padding-block: 5rem;
             color: var(--steel);
+            grid-column: 1/-1;
+        }
+        
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            opacity: 0.3;
         }
     </style>
 </head>
@@ -86,14 +141,23 @@
         </div>
 
         <div class="shop-filters">
+            <div class="shop-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search products..." aria-label="Search products">
+            </div>
             <select id="categoryFilter" aria-label="Filter by category">
-      <option value="all">All categories</option>
-    </select>
+                <option value="all">All categories</option>
+            </select>
             <select id="sortFilter" aria-label="Sort products">
-      <option value="default">Sort: Default</option>
-      <option value="price-asc">Price: Low to High</option>
-      <option value="price-desc">Price: High to Low</option>
-    </select>
+                <option value="default">Sort: Default</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name-asc">Name: A-Z</option>
+                <option value="name-desc">Name: Z-A</option>
+            </select>
             <span class="shop-count" id="shopCount"></span>
         </div>
 
@@ -134,29 +198,73 @@
     <script src="js/main.js"></script>
     <script>
         const params = new URLSearchParams(location.search);
+        const searchInput = document.getElementById('searchInput');
         const catFilter = document.getElementById('categoryFilter');
         const sortFilter = document.getElementById('sortFilter');
         const grid = document.getElementById('shopGrid');
         const countEl = document.getElementById('shopCount');
 
+        // Populate category filter
         const cats = [...new Set(products.map(p => p.category))];
         catFilter.innerHTML += cats.map(c => `<option value="${c}">${c}</option>`).join('');
         if (params.get('category')) catFilter.value = params.get('category');
 
         function render() {
-            let list = products.filter(p => catFilter.value === 'all' || p.category === catFilter.value);
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            let list = products.filter(p => {
+                const matchesCategory = catFilter.value === 'all' || p.category === catFilter.value;
+                const matchesSearch = !searchTerm || 
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    p.category.toLowerCase().includes(searchTerm) ||
+                    p.colour.toLowerCase().includes(searchTerm);
+                return matchesCategory && matchesSearch;
+            });
+            
+            // Sorting
             if (sortFilter.value === 'price-asc') list = [...list].sort((a, b) => a.price - b.price);
             if (sortFilter.value === 'price-desc') list = [...list].sort((a, b) => b.price - a.price);
+            if (sortFilter.value === 'name-asc') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+            if (sortFilter.value === 'name-desc') list = [...list].sort((a, b) => b.name.localeCompare(a.name));
 
             countEl.textContent = `${list.length} item${list.length !== 1 ? 's' : ''}`;
-            grid.innerHTML = list.length ?
-                list.map(renderProductCard).join('') :
-                `<div class="empty-state" style="grid-column: 1/-1;">Nothing here yet - check another category.</div>`;
+            
+            if (list.length) {
+                grid.innerHTML = list.map(renderProductCard).join('');
+            } else {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <h3 style="margin-bottom: 0.5rem;">No products found</h3>
+                        <p>Try adjusting your search or filters</p>
+                    </div>
+                `;
+            }
         }
 
+        // Event listeners with debounce for search
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(render, 300);
+        });
+        
         catFilter.addEventListener('change', render);
         sortFilter.addEventListener('change', render);
+        
+        // Initial render
         render();
+        
+        // Focus search on '/' key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
     </script>
 
 </body>

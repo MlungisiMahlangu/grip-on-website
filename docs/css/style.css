@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
 :root {
     /* Color — Void & Chalk, one accent (Grip Blue) */
     --void: #1e1e20;
@@ -9,14 +10,24 @@
     --steel: #8f8f8f;
     --grip-blue: #3a5cff;
     --grip-blue-dim: #24399e;
+    --grip-blue-glow: rgba(58, 92, 255, 0.3);
+    
     /* Type */
     --font-display: 'Anton', sans-serif;
     --font-body: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+    
     /* Layout */
     --max-width: 1280px;
     --gutter: clamp(1.25rem, 4vw, 3rem);
     --radius: 2px;
+    
+    /* Animations */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --transition-fast: 0.15s var(--ease-out-expo);
+    --transition-base: 0.3s var(--ease-out-expo);
+    --transition-slow: 0.6s var(--ease-out-expo);
 }
 
 * {
@@ -27,6 +38,26 @@
 
 html {
     scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--grip-blue) var(--ash);
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--ash);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--grip-blue);
+    border-radius: var(--radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--grip-blue-dim);
 }
 
 body {
@@ -137,27 +168,59 @@ h3 {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     border-radius: var(--radius);
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
 }
 
 .btn-primary {
     background: var(--chalk);
     color: var(--void);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary:hover {
     background: var(--grip-blue);
     color: var(--chalk);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--grip-blue-glow);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
 }
 
 .btn-outline {
     border: 1px solid var(--line);
     color: var(--chalk);
+    background: transparent;
 }
 
 .btn-outline:hover {
     border-color: var(--grip-blue);
     color: var(--grip-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--grip-blue-glow);
+}
+
+.btn-outline:active {
+    transform: translateY(0);
 }
 
 
@@ -168,7 +231,6 @@ h3 {
 .app-toast {
     position: fixed;
     bottom: 5.5rem;
-    /* sits above the floating WhatsApp button */
     left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: var(--chalk);
@@ -180,13 +242,44 @@ h3 {
     border-radius: var(--radius);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: all var(--transition-base);
     z-index: 300;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    max-width: 90vw;
 }
 
 .app-toast.show {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+.app-toast-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.app-toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--grip-blue);
+    width: 100%;
+    transform-origin: left;
+    animation: toast-progress 3s linear forwards;
+}
+
+@keyframes toast-progress {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
 }
 
 
@@ -199,8 +292,14 @@ h3 {
     top: 0;
     z-index: 50;
     background: rgba(13, 13, 13, 0.9);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--line);
+    transition: all var(--transition-base);
+}
+
+.site-header.scrolled {
+    background: rgba(13, 13, 13, 0.98);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .nav {
@@ -429,11 +528,34 @@ h3 {
 .product-card {
     background: var(--ash);
     border: 1px solid var(--line);
-    transition: border-color 0.15s ease;
+    transition: all var(--transition-base);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent, var(--grip-blue-glow));
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    pointer-events: none;
+    z-index: 1;
 }
 
 .product-card:hover {
     border-color: var(--grip-blue);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.product-card:hover::before {
+    opacity: 0.1;
 }
 
 .product-card-media {
@@ -444,13 +566,39 @@ h3 {
     justify-content: center;
     overflow: hidden;
     position: relative;
-    /* needed so the badge can sit in the corner */
 }
 
 .product-card-media img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    transition: transform var(--transition-slow);
+}
+
+.product-card:hover .product-card-media img {
+    transform: scale(1.08);
+}
+
+.product-card-media::after {
+    content: 'Quick View';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--chalk);
+    padding: 0.75rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: translateY(100%);
+    transition: transform var(--transition-base);
+}
+
+.product-card:hover .product-card-media::after {
+    transform: translateY(0);
 }
 
 .product-card-body {
@@ -528,6 +676,107 @@ h3 {
     color: var(--steel);
 }
 
+/* ==========================================================================
+   Scroll reveal animations
+   ========================================================================== */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-delay-1 {
+    transition-delay: 0.1s;
+}
+
+.reveal-delay-2 {
+    transition-delay: 0.2s;
+}
+
+.reveal-delay-3 {
+    transition-delay: 0.3s;
+}
+
+.reveal-delay-4 {
+    transition-delay: 0.4s;
+}
+
+/* Stagger animation for grid items */
+.product-grid .product-card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s var(--ease-out-expo) forwards;
+}
+
+.product-grid .product-card:nth-child(1) { animation-delay: 0.05s; }
+.product-grid .product-card:nth-child(2) { animation-delay: 0.1s; }
+.product-grid .product-card:nth-child(3) { animation-delay: 0.15s; }
+.product-grid .product-card:nth-child(4) { animation-delay: 0.2s; }
+.product-grid .product-card:nth-child(5) { animation-delay: 0.25s; }
+.product-grid .product-card:nth-child(6) { animation-delay: 0.3s; }
+.product-grid .product-card:nth-child(7) { animation-delay: 0.35s; }
+.product-grid .product-card:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================================================
+   Enhanced cart count badge
+   ========================================================================== */
+
+.cart-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.25rem;
+    margin-left: 0.35rem;
+    background: var(--grip-blue);
+    color: var(--chalk);
+    border-radius: 50%;
+    font-size: 0.65rem;
+    font-weight: 700;
+    transition: all var(--transition-fast);
+    animation: badge-pop 0.3s var(--ease-out-expo);
+}
+
+@keyframes badge-pop {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.cart-count.bump {
+    animation: badge-bump 0.4s var(--ease-out-expo);
+}
+
+@keyframes badge-bump {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.4);
+    }
+}
+
 
 /* ==========================================================================
    Product detail page — quantity buttons (bigger tap target)
@@ -539,11 +788,17 @@ h3 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.qty-row button:hover {
+    background: var(--grip-blue);
+    color: var(--chalk);
 }
 
 
 /* ==========================================================================
-   Floating WhatsApp button
+   Floating WhatsApp button (enhanced)
    ========================================================================== */
 
 .floating-whatsapp {
@@ -560,11 +815,45 @@ h3 {
     justify-content: center;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     z-index: 100;
-    transition: transform 0.15s ease;
+    transition: all var(--transition-base);
+}
+
+.floating-whatsapp::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #25D366;
+    opacity: 0.4;
+    animation: whatsapp-pulse 2s var(--ease-out-expo) infinite;
 }
 
 .floating-whatsapp:hover {
-    transform: scale(1.08);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.floating-whatsapp:active {
+    transform: scale(1.05);
+}
+
+@keyframes whatsapp-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+.floating-whatsapp svg {
+    width: 28px;
+    height: 28px;
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width: 480px) {
