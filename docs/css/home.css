@@ -7,6 +7,7 @@
     align-items: flex-end;
     overflow: hidden;
     border-bottom: 1px solid var(--line);
+    background: linear-gradient(115deg, rgba(11,13,13,.98) 0%, rgba(11,13,13,.72) 48%, rgba(11,13,13,.28) 100%), url('../images/brand/hero2.jpg') center/cover;
 }
 
 .hero-bg-type {
@@ -192,4 +193,25 @@ section {
     .feature-duo {
         grid-template-columns: 1fr;
     }
+}
+
+/* Art-directed campaign panels */
+.hero-bg-type span { color: rgba(245,244,237,.055); font-size: clamp(5rem, 19vw, 16rem); }
+.hero-copy { max-width: 660px; }
+.hero-copy h1 { font-size: clamp(3.5rem, 9vw, 8rem); letter-spacing: -.035em; }
+.hero-copy p { color: rgba(245,244,237,.78); }
+.hero-media { background: rgba(20,25,24,.55); border-color: rgba(197,255,61,.24); backdrop-filter: blur(2px); }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: screen; opacity: .9; }
+.category-chip { border-radius: 999px; }
+.statement { background: linear-gradient(135deg, var(--ash), #0f1312); }
+.statement-icon { color: var(--grip-blue); }
+.feature-panel { overflow: hidden; background-size: cover; background-position: center; }
+.feature-panel::before { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(11,13,13,.94), rgba(11,13,13,.04) 70%); }
+.feature-panel:first-child { background-image: url('../images/brand/hero2.jpg'); }
+.feature-panel:last-child { background-image: url('../images/brand/Brand1.jpg'); }
+.feature-panel > div { position: relative; z-index: 1; }
+
+@media (max-width: 860px) {
+    .hero { background-position: 62% center; }
+    .hero-copy h1 { font-size: clamp(3.25rem, 14vw, 6rem); }
 }
