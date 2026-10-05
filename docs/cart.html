@@ -261,8 +261,9 @@
             if (!cart.length) {
                 content.innerHTML = `
         <div style="text-align:center; padding-block:4rem; color: var(--steel);">
-          <p style="margin-bottom:1.5rem;">Your cart is empty.</p>
-          <a href="shop.html" class="btn btn-primary">Start shopping</a>
+          <p style="margin-bottom:0.5rem; font-size: 1.1rem;">Your cart is empty.</p>
+          <p style="margin-bottom:2rem; font-size: 0.9rem;">Ready to gear up? Check out our latest drops.</p>
+          <a href="shop.html" class="btn btn-primary">Shop now</a>
         </div>`;
                 return;
             }
@@ -298,6 +299,7 @@
           <div class="summary-line"><span>Subtotal</span><span>R${total}</span></div>
           <div class="summary-line"><span>Shipping</span><span>Calculated at checkout</span></div>
           <div class="summary-total"><span>Total</span><span class="price">R${total}</span></div>
+          <p style="font-size: 0.78rem; color: var(--steel); margin-top: 1rem; font-family: var(--font-mono);">🔒 Secure checkout via WhatsApp</p>
 
           <div class="checkout-form" id="checkoutForm">
             <div class="field">
@@ -308,7 +310,7 @@
                 <label for="custAddress">Delivery address</label>
                 <textarea id="custAddress" required placeholder="Street, suburb, city"></textarea>
             </div>
-            <button class="btn btn-primary" id="checkoutBtn" type="button">Checkout via WhatsApp</button>
+            <button class="btn btn-primary" id="checkoutBtn" type="button">Complete order on WhatsApp</button>
             <div class="field-error" id="checkoutError"></div>
           </div>
         </div>
