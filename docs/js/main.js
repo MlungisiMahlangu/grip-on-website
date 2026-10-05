@@ -1,96 +1,58 @@
 /* Shared behavior — runs on every page */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Mobile nav toggle
-    const waFooterLink = document.getElementById('waFooterLink');
-    if (waFooterLink) waFooterLink.href = `https://wa.me/${BRAND_WHATSAPP}`;
-    const toggle = document.getElementById("navToggle");
-    const links = document.getElementById("navLinks");
-    if (toggle && links) {
-        toggle.addEventListener("click", () => {
-            const open = links.classList.toggle("open");
-            toggle.setAttribute("aria-expanded", open);
-        });
-    }
-
-    // Scroll-aware header
-    const header = document.querySelector('.site-header');
-    let lastScroll = 0;
-    
-    const handleScroll = () => {
-        const currentScroll = window.pageYOffset;
-        
-        if (currentScroll > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-        
-        lastScroll = currentScroll;
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Scroll reveal animations
-    const revealElements = document.querySelectorAll('.reveal');
-    
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                revealObserver.unobserve(entry.target);
+            // Mobile nav toggle
+            const waFooterLink = document.getElementById('waFooterLink');
+            if (waFooterLink) waFooterLink.href = `https://wa.me/${BRAND_WHATSAPP}`;
+            const toggle = document.getElementById("navToggle");
+            const links = document.getElementById("navLinks");
+            if (toggle && links) {
+                toggle.addEventListener("click", () => {
+                    const open = links.classList.toggle("open");
+                    toggle.setAttribute("aria-expanded", open);
+                });
             }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
-    
-    revealElements.forEach(el => revealObserver.observe(el));
 
-    // Cart preview
-    const cartLink = document.querySelector('.cart-link');
-    if (cartLink) {
-        const preview = document.createElement('div');
-        preview.className = 'cart-preview';
-        preview.id = 'cartPreview';
-        document.querySelector('.nav-actions').style.position = 'relative';
-        document.querySelector('.nav-actions').appendChild(preview);
+            const cartLink = document.querySelector('.cart-link');
+            if (cartLink) {
+                const preview = document.createElement('div');
+                preview.className = 'cart-preview';
+                preview.id = 'cartPreview';
+                document.querySelector('.nav-actions').style.position = 'relative';
+                document.querySelector('.nav-actions').appendChild(preview);
 
-        function renderCartPreview() {
-            const cart = getCart();
-            if (!cart.length) {
-                preview.innerHTML = `<div class="cart-preview-empty">Your cart is empty.</div>`;
-                return;
-            }
-            const rows = cart.slice(0, 4).map(item => {
-                const p = findProduct(item.id);
-                if (!p) return '';
-                return `<div class="cart-preview-row">
+                function renderCartPreview() {
+                    const cart = getCart();
+                    if (!cart.length) {
+                        preview.innerHTML = `<div class="cart-preview-empty">Your cart is empty.</div>`;
+                        return;
+                    }
+                    const rows = cart.slice(0, 4).map(item => {
+                        const p = findProduct(item.id);
+                        if (!p) return '';
+                        return `<div class="cart-preview-row">
         <span>${p.name} (${item.size}) x${item.qty}</span>
         <span class="price">R${p.price * item.qty}</span>
       </div>`;
-            }).join('');
-            preview.innerHTML = `
+                    }).join('');
+                    preview.innerHTML = `
       ${rows}
       ${cart.length > 4 ? `<div class="cart-preview-more">+${cart.length - 4} more</div>` : ''}
       <div class="cart-preview-total"><span>Total</span><span class="price">R${cartTotal()}</span></div>
       <a href="cart.html" class="btn btn-primary" style="width:100%; justify-content:center;">View cart</a>
     `;
-        }
+  }
 
-        cartLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            renderCartPreview();
-            preview.classList.toggle('open');
-        });
+  cartLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    renderCartPreview();
+    preview.classList.toggle('open');
+  });
 
-        document.addEventListener('click', (e) => {
-            if (!preview.contains(e.target) && e.target !== cartLink) preview.classList.remove('open');
-        });
-    }
-
-    // Floating WhatsApp button
+  document.addEventListener('click', (e) => {
+    if (!preview.contains(e.target) && e.target !== cartLink) preview.classList.remove('open');
+  });
+}
     const waBtn = document.createElement('a');
     waBtn.href = `https://wa.me/${BRAND_WHATSAPP}`;
     waBtn.target = "_blank";
@@ -102,23 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(waBtn);
 
     updateCartCount();
-    
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href !== '#' && href.length > 1) {
-                const target = document.querySelector(href);
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-        });
-    });
 });
 
-function showToast(message, type = 'success') {
+function showToast(message) {
     let toast = document.getElementById('appToast');
     if (!toast) {
         toast = document.createElement('div');
@@ -126,15 +74,8 @@ function showToast(message, type = 'success') {
         toast.className = 'app-toast';
         document.body.appendChild(toast);
     }
-    
-    const icon = type === 'success' 
-        ? '<svg class="app-toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>'
-        : '<svg class="app-toast-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>';
-    
-    toast.innerHTML = `${icon}<span>${message}</span><div class="app-toast-progress"></div>`;
+    toast.textContent = message;
     toast.classList.add('show');
     clearTimeout(toast._hideTimer);
-    toast._hideTimer = setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
+    toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 2500);
 }
