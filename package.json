@@ -9,13 +9,15 @@
     "dev:server": "npm run dev --workspace=server",
     "build": "npm run build --workspace=client",
     "start": "npm run start --workspace=server",
-    "lint": "eslint . --ext .js,.jsx"
+    "lint": "eslint . --ext .js,.jsx",
+    "deploy": "npm run build && gh-pages -d client/dist"
   },
   "workspaces": [
     "client",
     "server"
   ],
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "gh-pages": "^6.3.0"
   }
 }
