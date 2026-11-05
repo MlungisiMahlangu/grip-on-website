@@ -211,18 +211,11 @@ h3 {
 }
 
 .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     font-family: var(--font-display);
     font-size: 1.1rem;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-}
-
-.nav-logo svg {
-    width: 26px;
-    height: 26px;
+    font-weight: 700;
 }
 
 .nav-links {
@@ -543,41 +536,6 @@ h3 {
 
 
 /* ==========================================================================
-   Floating WhatsApp button
-   ========================================================================== */
-
-.floating-whatsapp {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    width: 56px;
-    height: 56px;
-    background: #25D366;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-    z-index: 100;
-    transition: transform 0.15s ease;
-}
-
-.floating-whatsapp:hover {
-    transform: scale(1.08);
-}
-
-@media (max-width: 480px) {
-    .floating-whatsapp {
-        width: 48px;
-        height: 48px;
-        bottom: 1rem;
-        right: 1rem;
-    }
-}
-
-
-/* ==========================================================================
    Scroll-to-top button
    ========================================================================== */
 
@@ -623,77 +581,6 @@ h3 {
         height: 42px;
         bottom: 1rem;
         left: 1rem;
-    }
-}
-
-
-/* ==========================================================================
-   Newsletter signup
-   ========================================================================== */
-
-.newsletter {
-    background: var(--ash);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding-block: 4rem;
-    text-align: center;
-}
-
-.newsletter h3 {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    margin-bottom: 0.75rem;
-}
-
-.newsletter p {
-    color: var(--steel);
-    max-width: 40ch;
-    margin: 0 auto 1.5rem;
-    font-size: 0.95rem;
-}
-
-.newsletter-form {
-    display: flex;
-    gap: 0.75rem;
-    max-width: 480px;
-    margin: 0 auto;
-}
-
-.newsletter-form input {
-    flex: 1;
-    padding: 0.85rem 1rem;
-    background: var(--void);
-    border: 1px solid var(--line);
-    color: var(--chalk);
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    border-radius: var(--radius);
-}
-
-.newsletter-form input:focus {
-    outline: none;
-    border-color: var(--grip-blue);
-}
-
-.newsletter-form button {
-    padding: 0.85rem 1.5rem;
-    background: var(--grip-blue);
-    color: var(--void);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border-radius: var(--radius);
-    transition: background 0.2s ease;
-}
-
-.newsletter-form button:hover {
-    background: var(--chalk);
-}
-
-@media (max-width: 640px) {
-    .newsletter-form {
-        flex-direction: column;
     }
 }
 
@@ -865,4 +752,80 @@ h3 {
     color: var(--chalk);
     font-size: 1.5rem;
     cursor: pointer;
+}
+
+/* ==========================================================================
+   Responsive utilities & mobile optimizations
+   ========================================================================== */
+
+/* Ensure minimum touch target size on mobile */
+@media (max-width: 760px) {
+    button, .btn, a.btn, .nav-toggle, .cart-link, .size-btn, .qty-row button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Improve form inputs on mobile */
+    input, textarea, select {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    /* Better spacing for mobile */
+    .wrap {
+        padding-inline: 1rem;
+    }
+    
+    /* Stack elements properly on small screens */
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+    :root {
+        --gutter: 1rem;
+    }
+    
+    .nav-logo {
+        font-size: 1rem;
+    }
+    
+    h1 {
+        font-size: clamp(2rem, 10vw, 3rem);
+    }
+}
+
+/* Landscape mode on small devices */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        min-height: auto;
+        padding-block: 2rem;
+    }
+    
+    .hero-media {
+        max-height: 300px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .site-header, .site-footer, .floating-whatsapp, .scroll-top, .nav-toggle {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    a {
+        text-decoration: underline;
+    }
 }

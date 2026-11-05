@@ -112,9 +112,9 @@ export default function About() {
         </div>
 
         <section className="statement" style={{ marginTop: '2rem' }}>
-          <div className="wrap" style={{ maxWidth: 640 }}>
-            <h2>Ready to train in gear that holds?</h2>
-            <p>
+          <div className="wrap" style={{ maxWidth: 640, marginInline: 'auto', textAlign: 'center' }}>
+            <h2 style={{ marginInline: 'auto' }}>Ready to train in gear that holds?</h2>
+            <p style={{ marginInline: 'auto' }}>
               Join hundreds of lifters across South Africa who trust Grip On for their toughest
               sessions.
             </p>

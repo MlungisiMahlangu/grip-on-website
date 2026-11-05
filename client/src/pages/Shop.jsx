@@ -138,7 +138,8 @@ export default function Shop() {
               fontFamily: 'var(--font-mono)',
               fontSize: '0.78rem',
               letterSpacing: '0.05em',
-              minWidth: '180px',
+              minWidth: '150px',
+              flex: '1 1 150px',
             }}
           />
 

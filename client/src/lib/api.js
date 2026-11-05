@@ -42,7 +42,3 @@ export function createOrder(body) {
 export function submitContact(body) {
   return request('/contact', { method: 'POST', body: JSON.stringify(body) });
 }
-
-export function submitNewsletter(body) {
-  return request('/contact/newsletter', { method: 'POST', body: JSON.stringify(body) });
-}

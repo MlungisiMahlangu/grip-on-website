@@ -5,7 +5,6 @@ import { ToastProvider } from './context/ToastContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollTopButton from './components/ScrollTopButton';
-import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import Product from './pages/Product';
@@ -36,7 +35,6 @@ export default function App() {
             </Routes>
             <Footer />
             <ScrollTopButton />
-            <WhatsAppButton />
           </BrowserRouter>
         </ToastProvider>
       </CartProvider>

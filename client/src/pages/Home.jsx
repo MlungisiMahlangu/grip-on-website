@@ -4,15 +4,12 @@ import { Helmet } from 'react-helmet-async';
 import ProductCard from '../components/ProductCard';
 import ProductGridSkeleton from '../components/ProductGridSkeleton';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-import { fetchProducts, submitNewsletter } from '../lib/api';
-import { useToast } from '../context/ToastContext';
+import { fetchProducts } from '../lib/api';
 
 export default function Home() {
   const [featured, setFeatured] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const toast = useToast();
   const revealRef = useScrollReveal();
 
   useEffect(() => {
@@ -25,18 +22,6 @@ export default function Home() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
-
-  async function handleNewsletter(e) {
-    e.preventDefault();
-    try {
-      await submitNewsletter({ email });
-      toast('Thanks for subscribing!');
-      setEmail('');
-    } catch {
-      toast('Thanks for subscribing!');
-      setEmail('');
-    }
-  }
 
   return (
     <>
@@ -170,44 +155,6 @@ export default function Home() {
               </span>
             </div>
           </Link>
-        </div>
-      </section>
-
-      <section className="newsletter">
-        <div className="wrap">
-          <span className="eyebrow">Join the crew</span>
-          <h2 style={{ marginTop: '0.5rem' }}>Get 10% off your first order</h2>
-          <p
-            style={{
-              color: 'var(--steel)',
-              marginTop: '0.75rem',
-              maxWidth: '42ch',
-              marginInline: 'auto',
-            }}
-          >
-            Subscribe and be the first to know when new gear arrives. Plus get exclusive access to
-            restocks and member-only deals.
-          </p>
-          <form className="newsletter-form" id="newsletterForm" style={{ marginTop: '2rem' }} onSubmit={handleNewsletter}>
-            <input
-              type="email"
-              placeholder="Your email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                flex: 1,
-                background: 'var(--void)',
-                border: '1px solid var(--line)',
-                color: 'var(--chalk)',
-                padding: '0.75rem 1rem',
-                fontFamily: 'var(--font-body)',
-              }}
-            />
-            <button type="submit" className="btn btn-primary">
-              Get my code
-            </button>
-          </form>
         </div>
       </section>
     </>

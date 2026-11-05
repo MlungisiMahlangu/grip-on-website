@@ -150,12 +150,14 @@ section {
 .statement-icon {
     width: 48px;
     height: 48px;
-    margin-inline: auto 1.5rem;
+    margin-inline: auto;
+    margin-bottom: 1.5rem;
 }
 
 .statement h2 {
     max-width: 18ch;
-    margin-inline: auto 1.25rem;
+    margin-inline: auto;
+    margin-bottom: 1.25rem;
 }
 
 .statement p {

@@ -41,16 +41,6 @@ export default function Header() {
     <header className="site-header">
       <div className="wrap nav">
         <Link to="/" className="nav-logo">
-          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="30" width="6" height="10" fill="currentColor" />
-            <rect x="84" y="30" width="6" height="10" fill="currentColor" />
-            <rect x="16" y="33" width="68" height="4" fill="currentColor" />
-            <path
-              d="M38 37 L38 45 C38 55 34 58 30 62 C26 66 26 72 26 78 L26 90 L74 90 L74 78 C74 72 74 66 70 62 C66 58 62 55 62 45 L62 37 Z"
-              fill="currentColor"
-            />
-            <path d="M45 60 L45 78 M55 60 L55 78" stroke="var(--void)" strokeWidth="3" />
-          </svg>{' '}
           Grip On
         </Link>
 

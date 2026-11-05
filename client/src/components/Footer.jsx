@@ -33,9 +33,6 @@ export default function Footer() {
         <div className="footer-bottom">
           <span>&copy; 2026 {BRAND.name}</span>
           <span>{BRAND.location}</span>
-          <span>
-            Designed & built by {BRAND.designer} · {BRAND.designerPhone}
-          </span>
         </div>
       </div>
     </footer>
