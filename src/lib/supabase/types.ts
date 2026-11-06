@@ -20,6 +20,7 @@ export type PaymentMethod = "cod";
 export type PaymentStatus = "unpaid" | "paid" | "refunded";
 export type DiscountKind = "percent" | "fixed";
 export type ContactMessageStatus = "new" | "read" | "archived";
+export type DeliveryArea = "johannesburg" | "outside";
 export type SubscriberSource = "checkout" | "contact" | "admin" | "footer";
 
 export type Profile = {
@@ -86,6 +87,7 @@ export type ProductVariant = {
   size: GarmentSize;
   sku: string;
   stock_quantity: number;
+  is_available: boolean;
   is_active: boolean;
   created_at: string;
 };
@@ -113,6 +115,10 @@ export type Order = {
   discount_cents: number;
   delivery_fee_cents: number;
   total_cents: number;
+  delivery_area: DeliveryArea;
+  delivery_quote_required: boolean;
+  idempotency_key: string | null;
+  admin_viewed_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -145,12 +151,18 @@ export type StoreSettings = {
   id: boolean;
   accent_hex: string;
   announcement_text: string;
+  announcement_enabled: boolean;
   free_delivery_threshold_cents: number;
   delivery_fee_cents: number;
+  delivery_info_text: string;
+  free_delivery_area: string;
   contact_email: string;
+  contact_phone: string;
   instagram_url: string | null;
   maintenance_mode: boolean;
   maintenance_message: string;
+  business_address: string;
+  business_registration: string;
   updated_at: string;
 };
 
@@ -318,6 +330,7 @@ export type Database = {
           size: GarmentSize;
           sku: string;
           stock_quantity?: number;
+          is_available?: boolean;
           is_active?: boolean;
           created_at?: string;
         },
@@ -348,6 +361,10 @@ export type Database = {
           discount_cents?: number;
           delivery_fee_cents: number;
           total_cents: number;
+          delivery_area?: DeliveryArea;
+          delivery_quote_required?: boolean;
+          idempotency_key?: string | null;
+          admin_viewed_at?: string | null;
           created_at?: string;
           updated_at?: string;
         },
@@ -389,12 +406,18 @@ export type Database = {
           id?: boolean;
           accent_hex?: string;
           announcement_text?: string;
+          announcement_enabled?: boolean;
           free_delivery_threshold_cents?: number;
           delivery_fee_cents?: number;
+          delivery_info_text?: string;
+          free_delivery_area?: string;
           contact_email?: string;
+          contact_phone?: string;
           instagram_url?: string | null;
           maintenance_mode?: boolean;
           maintenance_message?: string;
+          business_address?: string;
+          business_registration?: string;
           updated_at?: string;
         },
         Partial<Omit<StoreSettings, "id">>

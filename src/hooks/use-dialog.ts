@@ -7,6 +7,11 @@ const FOCUSABLE =
 
 export function useDialog<T extends HTMLElement>(open: boolean, onClose: () => void) {
   const ref = useRef<T>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -29,7 +34,7 @@ export function useDialog<T extends HTMLElement>(open: boolean, onClose: () => v
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -58,7 +63,7 @@ export function useDialog<T extends HTMLElement>(open: boolean, onClose: () => v
       document.body.style.overflow = previousOverflow;
       previousFocus?.focus();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   return ref;
 }

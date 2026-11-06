@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { FEATURES } from "@/lib/features";
 import { getAdminDiscount } from "@/lib/admin/operations-queries";
 import { formatOrderDate } from "@/lib/orders/format";
 import { AdminPageHeader, AdminPanel } from "@/components/admin/ui";
@@ -15,6 +16,8 @@ export default async function EditDiscountPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  if (!FEATURES.discounts) redirect("/admin/discounts");
+
   const { id } = await params;
   const discount = await getAdminDiscount(id);
   if (!discount) notFound();

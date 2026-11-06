@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { formatPriceCents } from "@/lib/utils";
@@ -16,12 +14,10 @@ export function ProductCard({
 }) {
   const defaultColour = product.colours.find((colour) => colour.id === product.defaultColourId);
   const availableColours = product.colours.filter((colour) => colour.inStock);
-  const soldOut = product.totalStock === 0;
+  const soldOut = availableColours.length === 0;
   const front = product.images.front;
   const back = product.images.back;
-  const alt = defaultColour
-    ? `${product.name} in ${defaultColour.name}`
-    : product.name;
+  const alt = defaultColour ? `${product.name} in ${defaultColour.name}` : product.name;
 
   return (
     <article className="group relative">
@@ -34,6 +30,7 @@ export function ProductCard({
                 alt={alt}
                 fill
                 priority={priority}
+                fetchPriority={priority ? "high" : undefined}
                 loading={priority ? "eager" : undefined}
                 sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 30vw, 50vw"
                 className={
@@ -59,47 +56,38 @@ export function ProductCard({
             </div>
           )}
 
-          <div className="pointer-events-none absolute left-3 top-3 z-10 flex flex-col items-start gap-1.5">
-            {soldOut ? (
+          {soldOut ? (
+            <div className="pointer-events-none absolute left-3 top-3 z-10">
               <span className="rounded-full bg-ink/85 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-bone backdrop-blur-sm">
                 Sold out
               </span>
-            ) : product.isLowStock ? (
-              <span className="rounded-full bg-accent px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-accent-ink">
-                Low stock
-              </span>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="truncate font-sans text-sm font-semibold uppercase tracking-[0.06em] text-bone">
+            <h2 className="truncate font-sans text-body font-semibold uppercase tracking-[0.06em] text-bone">
               {product.name}
-            </h3>
+            </h2>
             {product.tagline ? (
-              <p className="mt-1 truncate text-xs text-bone-dim">{product.tagline}</p>
+              <p className="mt-1 truncate text-caption text-bone-dim">{product.tagline}</p>
             ) : null}
           </div>
-          <p className="shrink-0 font-mono text-xs text-bone">
+          <p className="shrink-0 font-mono text-caption text-bone">
             {formatPriceCents(product.priceCents)}
           </p>
         </div>
 
         {availableColours.length > 0 ? (
-          <div className="mt-2.5 flex items-center gap-2">
-            <span className="flex items-center gap-1" aria-hidden="true">
-              {availableColours.slice(0, 5).map((colour) => (
-                <span
-                  key={colour.id}
-                  className="h-2.5 w-2.5 rounded-full border border-bone/25"
-                  style={{ backgroundColor: colour.hex }}
-                />
-              ))}
-            </span>
-            <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-bone-dim">
-              {availableColours.length} {availableColours.length === 1 ? "colour" : "colours"}
-            </span>
+          <div className="mt-2.5 flex items-center gap-1" aria-hidden="true">
+            {availableColours.slice(0, 5).map((colour) => (
+              <span
+                key={colour.id}
+                className="h-2.5 w-2.5 rounded-full border border-bone/25"
+                style={{ backgroundColor: colour.hex }}
+              />
+            ))}
           </div>
         ) : null}
       </Link>

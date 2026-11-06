@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { MAX_ITEM_QUANTITY } from "@/lib/catalogue/types";
 
 export type CartItem = {
   key: string;
@@ -14,7 +15,6 @@ export type CartItem = {
   size: string;
   priceCents: number;
   imageUrl: string | null;
-  maxQuantity: number;
   quantity: number;
 };
 
@@ -34,8 +34,7 @@ export const useCartStore = create<CartState>()(
       items: [],
       addItem: (item) =>
         set((state) => {
-          const max = Math.max(1, item.maxQuantity);
-          const quantity = Math.max(1, Math.min(max, item.quantity ?? 1));
+          const quantity = Math.max(1, Math.min(MAX_ITEM_QUANTITY, item.quantity ?? 1));
           const existing = state.items.find((entry) => entry.variantId === item.variantId);
 
           if (existing) {
@@ -45,7 +44,7 @@ export const useCartStore = create<CartState>()(
                   ? {
                       ...entry,
                       ...item,
-                      quantity: Math.min(max, entry.quantity + quantity),
+                      quantity: Math.min(MAX_ITEM_QUANTITY, entry.quantity + quantity),
                     }
                   : entry,
               ),
@@ -69,7 +68,7 @@ export const useCartStore = create<CartState>()(
             entry.key === key
               ? {
                   ...entry,
-                  quantity: Math.max(1, Math.min(entry.maxQuantity, quantity)),
+                  quantity: Math.max(1, Math.min(MAX_ITEM_QUANTITY, quantity)),
                 }
               : entry,
           ),

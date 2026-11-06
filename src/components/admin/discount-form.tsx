@@ -6,6 +6,7 @@ import { saveDiscountAction } from "@/lib/admin/discount-actions";
 import { DISCOUNT_KINDS, DISCOUNT_KIND_LABELS, type FormState } from "@/lib/admin/schemas";
 import { toSastInputValue } from "@/lib/admin/dates";
 import type { DiscountCode, DiscountKind } from "@/lib/supabase/types";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { buttonClasses } from "@/components/ui/button";
 import { SelectField, TextField } from "@/components/ui/form-field";
 
@@ -20,6 +21,9 @@ export function DiscountForm({ discount }: { discount?: DiscountCode }) {
   const [state, formAction, pending] = useActionState(saveDiscountAction, initialState);
   const [kind, setKind] = useState<DiscountKind>(discount?.kind ?? "percent");
   const [active, setActive] = useState(discount?.is_active ?? true);
+  const [dirty, setDirty] = useState(false);
+
+  useUnsavedChanges(dirty);
 
   const valueHint =
     kind === "percent"
@@ -27,7 +31,12 @@ export function DiscountForm({ discount }: { discount?: DiscountCode }) {
       : "Rand amount off the bag subtotal, e.g. 150 or 150.00.";
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form
+      action={formAction}
+      onChange={() => setDirty(true)}
+      onSubmit={() => setDirty(false)}
+      className="space-y-6"
+    >
       {discount ? <input type="hidden" name="id" value={discount.id} /> : null}
 
       {state.error ? (
@@ -162,6 +171,7 @@ export function DiscountForm({ discount }: { discount?: DiscountCode }) {
         <Link href="/admin/discounts" className={buttonClasses("secondary")}>
           Cancel
         </Link>
+        {dirty ? <p className="self-center text-xs text-accent">Unsaved changes</p> : null}
       </div>
     </form>
   );

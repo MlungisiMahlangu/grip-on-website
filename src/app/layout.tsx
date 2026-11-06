@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { fontDisplay, fontMono, fontSans } from "@/lib/fonts";
 import { SITE } from "@/lib/site";
-import { MotionProvider } from "@/components/providers/motion-provider";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
-const title = `${SITE.name} — Gym apparel built for the work`;
+const title = `${SITE.name} · Gym apparel built for the work`;
 const description = SITE.description;
 
 const supabaseOrigin = (() => {
@@ -88,6 +88,8 @@ const jsonLd = {
       url: SITE.url,
       logo: `${SITE.url}/brand/logo-lifter.svg`,
       email: SITE.email,
+      telephone: SITE.phone.international,
+      sameAs: [SITE.instagram],
       address: {
         "@type": "PostalAddress",
         addressLocality: "Johannesburg",
@@ -117,7 +119,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html
       lang="en-ZA"
-      data-scroll-behavior="smooth"
       className={`${fontDisplay.variable} ${fontSans.variable} ${fontMono.variable}`}
     >
       <body>
@@ -127,7 +128,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <link rel="dns-prefetch" href={supabaseOrigin} />
           </>
         ) : null}
-        <MotionProvider>{children}</MotionProvider>
+        {children}
+        <Toaster />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

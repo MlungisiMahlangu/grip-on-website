@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { deliveryPricing, getStoreSettings } from "@/lib/orders/settings";
-import { formatPriceCents } from "@/lib/utils";
+import { deliveryInfo, getStoreSettings } from "@/lib/orders/settings";
+import { BUSINESS } from "@/lib/business";
 import { SITE } from "@/lib/site";
 import { LegalPage, type LegalSection } from "@/components/layout/legal-page";
 
@@ -14,10 +14,9 @@ export const metadata: Metadata = {
 
 export default async function ShippingReturnsPage() {
   const settings = await getStoreSettings();
-  const { feeCents, thresholdCents } = deliveryPricing(settings);
+  const { info, freeArea } = deliveryInfo(settings);
   const contactEmail = settings?.contact_email || SITE.email;
-  const feeLabel = formatPriceCents(feeCents);
-  const thresholdLabel = formatPriceCents(thresholdCents);
+  const contactPhone = settings?.contact_phone || BUSINESS.phone.local;
 
   const sections: LegalSection[] = [
     {
@@ -37,15 +36,31 @@ export default async function ShippingReturnsPage() {
       ),
     },
     {
-      heading: "What delivery costs",
+      heading: "How we confirm your order",
       body: (
         <>
           <p>
-            Delivery is {feeLabel} per order. Orders of {thresholdLabel} or more deliver free. The
-            exact fee is calculated in your bag and shown at checkout before you confirm.
+            When you place an order, we email a confirmation to the address you gave us. If anything
+            about the stock, address or phone number needs checking, we call or WhatsApp the number
+            on the order.
           </p>
           <p>
-            The delivery fee is based on the discounted subtotal after any valid discount code.
+            An order is confirmed once we have checked the stock and delivery details. If we cannot
+            confirm it, we cancel it and you owe nothing. Nothing is dispatched until it is
+            confirmed.
+          </p>
+        </>
+      ),
+    },
+    {
+      heading: "What delivery costs",
+      body: (
+        <>
+          <p>{info}</p>
+          <p>
+            Delivery is free in {freeArea}. Outside {freeArea}, we contact you after checkout to
+            confirm the courier cost and options before dispatch. The order total at checkout does
+            not include that delivery cost.
           </p>
         </>
       ),
@@ -88,7 +103,7 @@ export default async function ShippingReturnsPage() {
         <>
           <p>
             Open{" "}
-            <Link href="/track-order" className="text-bone underline underline-offset-2">
+            <Link href="/track-order" className="prose-link text-bone underline underline-offset-2">
               Track order
             </Link>{" "}
             and enter your order number with the email address or phone number used at checkout. You
@@ -108,7 +123,7 @@ export default async function ShippingReturnsPage() {
           <p>
             You have 14 days from delivery to return unworn, unwashed pieces with their tags and
             original packaging. Email{" "}
-            <a href={`mailto:${contactEmail}`} className="text-bone underline underline-offset-2">
+            <a href={`mailto:${contactEmail}`} className="prose-link text-bone underline underline-offset-2">
               {contactEmail}
             </a>{" "}
             with your order number and what you want to return.
@@ -145,10 +160,14 @@ export default async function ShippingReturnsPage() {
       body: (
         <>
           <p>
-            If a piece arrives damaged, defective or is not what you ordered, email us within 7 days
-            of delivery with your order number and photos. We will arrange a collection, then
-            replace the item or refund you in full, including the delivery fee. We cover the return
-            courier in these cases.
+            If a piece arrives damaged, defective or is not what you ordered, contact us as soon as
+            you notice, ideally within 7 days of delivery, with your order number and photos. We will
+            arrange a collection, then replace the item or refund you in full, including the
+            delivery fee. We cover the return courier in these cases.
+          </p>
+          <p>
+            Reporting quickly helps us fix the problem, but it does not shorten the warranty rights
+            the Consumer Protection Act gives you for defective goods.
           </p>
         </>
       ),
@@ -180,13 +199,17 @@ export default async function ShippingReturnsPage() {
     <LegalPage
       eyebrow="Shipping & returns"
       title="Delivery, plainly"
-      intro={`Nationwide courier for ${feeLabel}, free from ${thresholdLabel}. Cash on delivery, 14 days to return unworn pieces.`}
+      intro={`Free delivery in ${freeArea}. Other areas are quoted before dispatch. Cash on delivery, 14 days to return unworn pieces.`}
       updated="6 November 2026"
       contactEmail={contactEmail}
+      contactPhone={contactPhone}
+      businessAddress={settings?.business_address}
+      businessRegistration={settings?.business_registration}
       sections={sections}
       related={[
+        { label: "Terms of sale", href: "/terms-of-sale" },
         { label: "Privacy policy", href: "/privacy" },
-        { label: "Terms of sale", href: "/terms" },
+        { label: "FAQ", href: "/faq" },
       ]}
     />
   );

@@ -6,10 +6,12 @@ import { ORDER_STATUS_LABELS, formatOrderDate } from "@/lib/orders/format";
 import { formatPriceCents } from "@/lib/utils";
 import type { OrderStatus } from "@/lib/supabase/types";
 import { RealtimeRefresh } from "@/components/admin/realtime-refresh";
+import { FlashToast } from "@/components/admin/flash-toast";
 import {
   AdminEmpty,
   AdminPageHeader,
   AdminPanel,
+  DeliveryQuoteBadge,
   StatusBadge,
   TableShell,
   Td,
@@ -21,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Orders" };
 
-type SearchParams = Promise<{ status?: string; q?: string; page?: string }>;
+type SearchParams = Promise<{ status?: string; q?: string; page?: string; deleted?: string }>;
 
 function pageHref(params: { status?: string; q?: string }, page: number) {
   const query = new URLSearchParams();
@@ -50,6 +52,8 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
         description="Every order, its delivery details and where it is in the packing flow."
         action={<RealtimeRefresh channelName="orders" />}
       />
+
+      {params.deleted === "1" ? <FlashToast message="Cancelled order deleted." /> : null}
 
       <form method="get" className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
         {status ? <input type="hidden" name="status" value={status} /> : null}
@@ -147,7 +151,10 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                   >
                     <div className="flex items-center justify-between gap-3">
                       <span className="font-mono text-xs text-bone">{order.order_number}</span>
-                      <StatusBadge status={order.status} />
+                      <span className="flex flex-wrap items-center justify-end gap-1.5">
+                        {order.delivery_quote_required ? <DeliveryQuoteBadge /> : null}
+                        <StatusBadge status={order.status} />
+                      </span>
                     </div>
                     <div className="flex items-center justify-between gap-3">
                       <span className="min-w-0 truncate text-sm text-bone">
@@ -202,7 +209,10 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                         {formatOrderDate(order.created_at)}
                       </Td>
                       <Td>
-                        <StatusBadge status={order.status} />
+                        <div className="flex flex-col items-start gap-1.5">
+                          <StatusBadge status={order.status} />
+                          {order.delivery_quote_required ? <DeliveryQuoteBadge /> : null}
+                        </div>
                       </Td>
                       <Td className="font-mono text-[10px] uppercase tracking-[0.12em] text-bone-dim">
                         COD · {order.payment_status}

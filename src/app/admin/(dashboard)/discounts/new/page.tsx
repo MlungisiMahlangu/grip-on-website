@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { FEATURES } from "@/lib/features";
 import { AdminPageHeader } from "@/components/admin/ui";
 import { DiscountForm } from "@/components/admin/discount-form";
 
 export const metadata: Metadata = { title: "New discount" };
 
 export default function NewDiscountPage() {
+  if (!FEATURES.discounts) redirect("/admin/discounts");
+
   return (
     <>
       <Link

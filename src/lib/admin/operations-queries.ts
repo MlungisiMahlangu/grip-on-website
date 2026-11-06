@@ -1,6 +1,6 @@
 import "server-only";
 
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { createClient } from "@/lib/supabase/server";
 import { searchTerm } from "@/lib/admin/queries";
 import type {

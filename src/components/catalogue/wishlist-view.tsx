@@ -33,8 +33,8 @@ export function WishlistView({ products }: { products: CatalogueProduct[] }) {
     return (
       <div className="rounded-[var(--radius-card)] border border-line px-6 py-16 text-center">
         <LifterMark className="mx-auto h-10 opacity-40" />
-        <h2 className="display mt-5 text-3xl">Nothing saved yet.</h2>
-        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-bone-dim">
+        <h2 className="display mt-5 text-h3">Nothing saved yet.</h2>
+        <p className="mx-auto mt-3 max-w-sm text-body leading-relaxed text-bone-dim">
           Tap the heart on any piece to keep it here for later.
         </p>
         <Link href="/shop" className={buttonClasses("primary", "mt-7")}>
@@ -60,7 +60,7 @@ export function WishlistView({ products }: { products: CatalogueProduct[] }) {
       </div>
 
       <div className="mt-6">
-        <ProductGrid products={saved} priorityCount={2} />
+        <ProductGrid products={saved} priorityCount={4} />
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Download, Pause, Play, Search } from "lucide-react";
+import { Download, Search, Trash2 } from "lucide-react";
 import { getAdminSubscribers } from "@/lib/admin/operations-queries";
-import { setSubscriberActiveAction } from "@/lib/admin/subscriber-actions";
+import { deleteSubscriberAction } from "@/lib/admin/subscriber-actions";
 import { formatOrderDate } from "@/lib/orders/format";
 import { cn } from "@/lib/utils";
 import { buttonClasses } from "@/components/ui/button";
+import { ConfirmSubmit } from "@/components/ui/confirm-dialog";
+import { FlashToast } from "@/components/admin/flash-toast";
 import { controlClasses } from "@/components/ui/form-field";
 import {
   AdminEmpty,
@@ -15,11 +17,10 @@ import {
   Td,
   Th,
 } from "@/components/admin/ui";
-import { SubscriberForm } from "@/components/admin/subscriber-form";
 
 export const metadata: Metadata = { title: "Subscribers" };
 
-type SearchParams = Promise<{ status?: string; q?: string; page?: string }>;
+type SearchParams = Promise<{ status?: string; q?: string; page?: string; deleted?: string }>;
 
 const STATUS_LABELS: Record<string, string> = {
   checkout: "Checkout",
@@ -70,9 +71,11 @@ export default async function AdminSubscribersPage({
       <AdminPageHeader
         eyebrow="Marketing"
         title="Subscribers."
-        description="People who opted in at checkout, in the contact form, or were added by hand."
+        description="Read-only list of people who opted in at checkout or through the contact form. Export for your mailing platform."
         action={<ExportLink status={status ?? "all"} q={params.q} />}
       />
+
+      {params.deleted === "1" ? <FlashToast message="Subscriber deleted." /> : null}
 
       <div className="mb-5 grid gap-3 sm:grid-cols-3">
         <div className="rounded-[var(--radius-card)] border border-line bg-ink-soft px-4 py-4">
@@ -88,10 +91,6 @@ export default async function AdminSubscribersPage({
           <p className="display mt-2 text-3xl text-bone">{data.inactiveCount}</p>
         </div>
       </div>
-
-      <AdminPanel title="Add someone" className="mb-6">
-        <SubscriberForm />
-      </AdminPanel>
 
       <form method="get" className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
         {status ? <input type="hidden" name="status" value={status} /> : null}
@@ -163,7 +162,7 @@ export default async function AdminSubscribersPage({
             body={
               params.q
                 ? "Try a different email address."
-                : "Checkout and contact form opt-ins land here, or add someone by hand above."
+                : "Checkout and contact form opt-ins land here automatically."
             }
           />
         ) : (
@@ -186,21 +185,17 @@ export default async function AdminSubscribersPage({
                       {subscriber.is_active ? "Subscribed" : "Unsubscribed"}
                     </p>
                   </div>
-                  <form action={setSubscriberActiveAction}>
+                  <form action={deleteSubscriberAction}>
                     <input type="hidden" name="id" value={subscriber.id} />
-                    <input type="hidden" name="value" value={String(!subscriber.is_active)} />
-                    <button
-                      type="submit"
-                      className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] border border-line text-bone-dim transition-colors hover:border-bone hover:text-bone"
-                      aria-label={subscriber.is_active ? "Unsubscribe" : "Resubscribe"}
-                      title={subscriber.is_active ? "Unsubscribe" : "Resubscribe"}
+                    <ConfirmSubmit
+                      title={`Delete ${subscriber.email}?`}
+                      description="This removes the subscriber from the list permanently. It does not unsubscribe them from a mailing platform you have already exported to."
+                      confirmLabel="Delete subscriber"
+                      className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] border border-line text-bone-dim transition-colors hover:border-red-400/50 hover:text-red-300"
                     >
-                      {subscriber.is_active ? (
-                        <Pause className="h-4 w-4" aria-hidden="true" />
-                      ) : (
-                        <Play className="h-4 w-4" aria-hidden="true" />
-                      )}
-                    </button>
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">Delete {subscriber.email}</span>
+                    </ConfirmSubmit>
                   </form>
                 </li>
               ))}
@@ -239,21 +234,17 @@ export default async function AdminSubscribersPage({
                       </Td>
                       <Td>
                         <div className="flex justify-end">
-                          <form action={setSubscriberActiveAction}>
+                          <form action={deleteSubscriberAction}>
                             <input type="hidden" name="id" value={subscriber.id} />
-                            <input type="hidden" name="value" value={String(!subscriber.is_active)} />
-                            <button
-                              type="submit"
-                              className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] border border-line text-bone-dim transition-colors hover:border-bone hover:text-bone"
-                              aria-label={subscriber.is_active ? "Unsubscribe" : "Resubscribe"}
-                              title={subscriber.is_active ? "Unsubscribe" : "Resubscribe"}
+                            <ConfirmSubmit
+                              title={`Delete ${subscriber.email}?`}
+                              description="This removes the subscriber from the list permanently. It does not unsubscribe them from a mailing platform you have already exported to."
+                              confirmLabel="Delete subscriber"
+                              className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] border border-line text-bone-dim transition-colors hover:border-red-400/50 hover:text-red-300"
                             >
-                              {subscriber.is_active ? (
-                                <Pause className="h-4 w-4" aria-hidden="true" />
-                              ) : (
-                                <Play className="h-4 w-4" aria-hidden="true" />
-                              )}
-                            </button>
+                              <Trash2 className="h-4 w-4" aria-hidden="true" />
+                              <span className="sr-only">Delete {subscriber.email}</span>
+                            </ConfirmSubmit>
                           </form>
                         </div>
                       </Td>

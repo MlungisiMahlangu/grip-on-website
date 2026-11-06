@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 
 export type FormState = {
   error?: string;
@@ -172,14 +172,22 @@ export const settingsInputSchema = z.object({
     .trim()
     .min(1, "Add an announcement.")
     .max(140, "Keep the announcement under 140 characters."),
-  accentHex: z
+  announcementEnabled: z.boolean(),
+  deliveryInfoText: z
     .string()
     .trim()
-    .regex(/^#[0-9A-Fa-f]{6}$/, "Use a six-digit hex colour like #FF6A00.")
-    .transform((value) => value.toUpperCase()),
-  thresholdCents: randsSchema,
-  feeCents: randsSchema,
+    .min(1, "Add delivery information.")
+    .max(300, "Keep delivery information under 300 characters."),
+  freeDeliveryArea: z
+    .string()
+    .trim()
+    .min(1, "Enter the area with free delivery.")
+    .max(60, "Keep the area under 60 characters."),
   contactEmail: z.email("Enter a valid contact email.").trim().max(160),
+  contactPhone: z
+    .string()
+    .trim()
+    .regex(/^0[0-9]{9}$/, "Enter a 10-digit number starting with 0."),
   instagramUrl: z
     .string()
     .trim()
@@ -188,11 +196,11 @@ export const settingsInputSchema = z.object({
       message: "Enter a full https:// link or leave it blank.",
     }),
   maintenanceMode: z.boolean(),
-  maintenanceMessage: z
+  businessAddress: z.string().trim().max(300, "Keep the address under 300 characters."),
+  businessRegistration: z
     .string()
     .trim()
-    .min(1, "Add a maintenance message.")
-    .max(300, "Keep the message under 300 characters."),
+    .max(120, "Keep the registration number under 120 characters."),
   whatsappNumber: z
     .string()
     .trim()

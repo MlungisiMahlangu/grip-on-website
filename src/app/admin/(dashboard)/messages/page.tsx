@@ -7,6 +7,7 @@ import type { ContactMessageStatus } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { buttonClasses } from "@/components/ui/button";
 import { controlClasses } from "@/components/ui/form-field";
+import { FlashToast } from "@/components/admin/flash-toast";
 import {
   AdminEmpty,
   AdminPageHeader,
@@ -18,7 +19,7 @@ import {
 
 export const metadata: Metadata = { title: "Messages" };
 
-type SearchParams = Promise<{ status?: string; q?: string; page?: string }>;
+type SearchParams = Promise<{ status?: string; q?: string; page?: string; deleted?: string }>;
 
 const STATUS_LABELS: Record<ContactMessageStatus, string> = {
   new: "New",
@@ -75,6 +76,8 @@ export default async function AdminMessagesPage({
         title="Messages."
         description="Enquiries sent through the storefront contact form. Replies go out from your own email."
       />
+
+      {params.deleted === "1" ? <FlashToast message="Message deleted." /> : null}
 
       <form method="get" className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
         {status ? <input type="hidden" name="status" value={status} /> : null}

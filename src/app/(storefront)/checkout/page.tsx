@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getCatalogue } from "@/lib/catalogue/queries";
-import { deliveryPricing, getStoreSettings } from "@/lib/orders/settings";
 import type { CheckoutVariant } from "@/lib/checkout/types";
 import { Breadcrumbs } from "@/components/catalogue/breadcrumbs";
 import { CheckoutView } from "@/components/checkout/checkout-view";
@@ -14,8 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const [{ products }, settings] = await Promise.all([getCatalogue(), getStoreSettings()]);
-  const { feeCents, thresholdCents } = deliveryPricing(settings);
+  const { products } = await getCatalogue();
 
   const variants: CheckoutVariant[] = products.flatMap((product) =>
     product.colours.flatMap((colour) =>
@@ -26,7 +24,7 @@ export default async function CheckoutPage() {
         colourName: colour.name,
         size: size.size,
         priceCents: product.priceCents,
-        stock: size.stock,
+        available: size.inStock,
         imageUrl: colour.frontImage,
       })),
     ),
@@ -47,23 +45,19 @@ export default async function CheckoutPage() {
           <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="eyebrow text-accent">Almost yours</p>
-              <h1 className="display mt-3 text-[clamp(3.5rem,10vw,8rem)]">
+              <h1 className="display mt-3 text-hero">
                 Checkout<span className="text-accent">.</span>
               </h1>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-bone-dim">
+            <p className="max-w-sm text-body leading-relaxed text-bone-dim">
               Cash on delivery. Add your delivery details and we will confirm your order by email.
             </p>
           </div>
         </div>
       </section>
 
-      <div className="container-x py-8 sm:py-10">
-        <CheckoutView
-          variants={variants}
-          deliveryFeeCents={feeCents}
-          freeDeliveryThresholdCents={thresholdCents}
-        />
+      <div className="container-x section-y">
+        <CheckoutView variants={variants} />
       </div>
     </div>
   );

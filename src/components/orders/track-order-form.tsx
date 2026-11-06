@@ -19,7 +19,7 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder?: string }) {
       <form action={formAction} className="lg:col-span-5">
         <div className="rounded-[var(--radius-card)] border border-line bg-ink-soft p-5">
           <h2 className="eyebrow text-bone">Find your order</h2>
-          <p className="mt-3 text-sm leading-relaxed text-bone-dim">
+          <p className="mt-3 text-body leading-relaxed text-bone-dim">
             Use the order number from your confirmation email and the same email or phone number you
             checked out with.
           </p>
@@ -29,16 +29,28 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder?: string }) {
               label="Order number"
               name="orderNumber"
               defaultValue={state.orderNumber ?? defaultOrder}
-              placeholder="GO-2026-0000"
+              placeholder="GO-2026-0001"
+              hint="Like GO-2026-0001. It is in your confirmation email."
               autoComplete="off"
+              autoCapitalize="characters"
               spellCheck={false}
+              maxLength={13}
+              error={state.fieldErrors?.orderNumber}
+              onInput={(event) => {
+                const input = event.currentTarget;
+                const formatted = input.value.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+                if (input.value !== formatted) input.value = formatted;
+              }}
               required
             />
             <TextField
-              label="Email or phone"
+              label="Email or mobile number"
               name="contact"
               defaultValue={state.contact}
+              hint="Use the same email or 10-digit mobile number you checked out with."
               autoComplete="email"
+              spellCheck={false}
+              error={state.fieldErrors?.contact}
               required
             />
             <button type="submit" disabled={pending} className={buttonClasses("primary", "w-full")}>
@@ -56,7 +68,7 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder?: string }) {
             </button>
           </div>
 
-          {state.message ? (
+          {state.message && !state.fieldErrors ? (
             <p
               role="alert"
               className="mt-4 rounded-[var(--radius-card)] border border-red-400/40 bg-red-400/10 px-4 py-3 text-sm text-red-200"
@@ -85,8 +97,9 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder?: string }) {
                 </p>
               </div>
               <p className="mt-4 border-t border-line pt-4 text-xs leading-relaxed text-bone-dim">
-                Cash on delivery. Have {formatPriceCents(state.order.total_cents)} ready for the
-                courier.
+                {state.order.delivery_quote_required && state.order.delivery_fee_cents === 0
+                  ? `Cash on delivery. Have ${formatPriceCents(state.order.total_cents)} ready for your order. We will contact you to confirm the courier cost before dispatch.`
+                  : `Cash on delivery. Have ${formatPriceCents(state.order.total_cents)} ready for the courier.`}
               </p>
             </div>
 
@@ -96,13 +109,13 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder?: string }) {
         ) : state.status === "notfound" || state.status === "error" ? (
           <div className="flex h-full min-h-60 flex-col items-center justify-center rounded-[var(--radius-card)] border border-line bg-ink-soft px-6 py-12 text-center">
             <Search className="h-8 w-8 text-bone-dim" strokeWidth={1.5} />
-            <p className="mt-4 text-sm leading-relaxed text-bone-dim">
+            <p className="mt-4 text-body leading-relaxed text-bone-dim">
               Nothing yet. Check the order number and the contact you used at checkout.
             </p>
           </div>
         ) : (
           <div className="flex h-full min-h-60 flex-col items-center justify-center rounded-[var(--radius-card)] border border-dashed border-line px-6 py-12 text-center">
-            <p className="max-w-xs text-sm leading-relaxed text-bone-dim">
+            <p className="max-w-xs text-body leading-relaxed text-bone-dim">
               Your order details will appear here once we find it.
             </p>
           </div>

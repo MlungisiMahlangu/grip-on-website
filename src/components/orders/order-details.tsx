@@ -65,22 +65,23 @@ export function OrderItemsCard({ order }: { order: TrackedOrder }) {
           <span className="text-bone-dim">Subtotal</span>
           <span className="font-mono text-bone">{formatPriceCents(order.subtotal_cents)}</span>
         </div>
-        {order.discount_cents > 0 ? (
-          <div className="mt-2 flex items-baseline justify-between gap-3 text-sm">
-            <span className="text-bone-dim">
-              Discount{order.discount_code ? ` · ${order.discount_code}` : ""}
-            </span>
-            <span className="font-mono text-emerald-300">
-              −{formatPriceCents(order.discount_cents)}
-            </span>
-          </div>
-        ) : null}
         <div className="mt-2 flex items-baseline justify-between gap-3 text-sm">
           <span className="text-bone-dim">Delivery</span>
           <span className="font-mono text-bone">
-            {order.delivery_fee_cents === 0 ? "Free" : formatPriceCents(order.delivery_fee_cents)}
+            {order.delivery_quote_required
+              ? order.delivery_fee_cents > 0
+                ? formatPriceCents(order.delivery_fee_cents)
+                : "To be confirmed"
+              : order.delivery_fee_cents === 0
+                ? "Free"
+                : formatPriceCents(order.delivery_fee_cents)}
           </span>
         </div>
+        {order.delivery_quote_required && order.delivery_fee_cents === 0 ? (
+          <p className="mt-2 text-caption leading-relaxed text-bone-dim">
+            We will contact you to confirm the courier cost and options before dispatch.
+          </p>
+        ) : null}
         <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-line pt-4">
           <span className="text-sm text-bone">Total</span>
           <span className="font-mono text-lg text-bone">{formatPriceCents(order.total_cents)}</span>

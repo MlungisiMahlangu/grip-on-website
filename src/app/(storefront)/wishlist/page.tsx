@@ -22,18 +22,18 @@ export default async function WishlistPage() {
           <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="eyebrow text-accent">Saved for later</p>
-              <h1 className="display mt-3 text-[clamp(3.5rem,10vw,8rem)]">
+              <h1 className="display mt-3 text-hero">
                 Wishlist<span className="text-accent">.</span>
               </h1>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-bone-dim">
+            <p className="max-w-md text-body leading-relaxed text-bone-dim">
               Your saved pieces, kept on this device. Sizes and stock are shown on each product.
             </p>
           </div>
         </div>
       </section>
 
-      <div className="container-x py-9 sm:py-12">
+      <div className="container-x section-y">
         <WishlistView products={products} />
       </div>
     </div>

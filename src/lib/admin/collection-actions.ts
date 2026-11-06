@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { assertAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import { collectionInputSchema, slugify, type FormState } from "@/lib/admin/schemas";
@@ -94,6 +94,20 @@ export async function saveCollectionAction(
   revalidateCollections();
   if (id) revalidatePath(`/admin/collections/${id}`);
   redirect("/admin/collections?saved=1");
+}
+
+export async function deleteCollectionAction(formData: FormData) {
+  await assertAdmin();
+
+  const parsed = z.uuid().safeParse(text(formData, "id"));
+  if (!parsed.success) throw new Error("Invalid collection.");
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("collections").delete().eq("id", parsed.data);
+  if (error) throw new Error(error.message);
+
+  revalidateCollections();
+  redirect("/admin/collections?deleted=1");
 }
 
 export async function toggleCollectionActiveAction(formData: FormData) {

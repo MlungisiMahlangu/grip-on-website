@@ -62,6 +62,7 @@ export default async function ProductPage({
 
   const related = getRelatedProducts(product, products, 4);
   const variantCount = product.colours.reduce((total, colour) => total + colour.sizes.length, 0);
+  const hasAvailableVariant = product.colours.some((colour) => colour.inStock);
   const price = (product.priceCents / 100).toFixed(2);
 
   const jsonLd = {
@@ -79,18 +80,18 @@ export default async function ProductPage({
       highPrice: price,
       offerCount: variantCount,
       itemCondition: "https://schema.org/NewCondition",
-      availability:
-        product.totalStock > 0
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
+      availability: hasAvailableVariant
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
       url: `${SITE.url}/products/${product.slug}`,
     },
   };
 
   return (
     <>
-      <div className="bg-ink">
-        <div className="container-x pt-6 sm:pt-8">
+      <div className="pb-24 lg:pb-0">
+        <div className="bg-ink">
+          <div className="container-x pt-6 sm:pt-8">
           <Breadcrumbs
             items={[
               { label: "Home", href: "/" },
@@ -107,11 +108,11 @@ export default async function ProductPage({
 
       {related.length > 0 ? (
         <section className="border-t border-line bg-ink">
-          <div className="container-x py-14 sm:py-20">
+          <div className="container-x section-y">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="eyebrow text-accent">From the same range</p>
-                <h2 className="display mt-3 text-[clamp(2.5rem,6vw,4.5rem)]">
+                <h2 className="display mt-3 text-h2">
                   More for the work.
                 </h2>
               </div>
@@ -126,6 +127,7 @@ export default async function ProductPage({
           </div>
         </section>
       ) : null}
+      </div>
 
       <script
         type="application/ld+json"

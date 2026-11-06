@@ -17,12 +17,12 @@ export async function FeaturedProducts() {
   if (products.length === 0) return null;
 
   return (
-    <section className="border-b border-line bg-ink py-14 sm:py-20 lg:py-24">
+    <section className="border-b border-line bg-ink section-y">
       <div className="container-x">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="eyebrow text-accent">New gear</p>
-            <h2 className="display mt-3 text-[clamp(2.75rem,7vw,5.5rem)]">
+            <h2 className="display mt-3 text-h2">
               The core range<span className="text-accent">.</span>
             </h2>
           </div>

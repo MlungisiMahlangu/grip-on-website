@@ -26,8 +26,8 @@ export default function AcceptInvitePage() {
       <main id="main-content" className="flex flex-1 items-center justify-center px-5 py-14 sm:px-10">
         <div className="w-full max-w-sm">
           <p className="eyebrow text-accent">Admin access</p>
-          <h1 className="display mt-3 text-4xl sm:text-5xl">Set your password.</h1>
-          <p className="mt-3 text-sm leading-relaxed text-bone-dim">
+          <h1 className="display mt-3 text-h2">Set your password.</h1>
+          <p className="mt-3 text-body leading-relaxed text-bone-dim">
             You have been invited to the Grip On dashboard. Choose a password to finish setting up
             your account.
           </p>

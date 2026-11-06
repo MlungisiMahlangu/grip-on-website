@@ -1,9 +1,10 @@
 "use server";
 
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { createPublicClient } from "@/lib/supabase/server";
 import { contactMessageSchema } from "@/lib/contact/schema";
 import { sendContactEmail } from "@/lib/email/contact-email";
+import { checkRateLimit, requestKey, retryMessage } from "@/lib/rate-limit";
 
 export type ContactFormState = {
   error?: string;
@@ -24,6 +25,15 @@ export async function sendContactMessageAction(
   _previous: ContactFormState,
   formData: FormData,
 ): Promise<ContactFormState> {
+  if (String(formData.get("website") ?? "").trim()) {
+    return { success: "Message sent. We reply within one working day." };
+  }
+
+  const limited = checkRateLimit(await requestKey("contact"), 5, 10 * 60_000);
+  if (!limited.ok) {
+    return { error: retryMessage(limited.retryAfterSeconds) };
+  }
+
   const parsed = contactMessageSchema.safeParse({
     name: String(formData.get("name") ?? ""),
     email: String(formData.get("email") ?? ""),
@@ -43,7 +53,7 @@ export async function sendContactMessageAction(
   const { error } = await supabase.rpc("submit_contact_message", {
     p_name: input.name,
     p_email: input.email,
-    p_phone: input.phone || null,
+    p_phone: input.phone,
     p_subject: input.subject,
     p_message: input.message,
   });
@@ -66,6 +76,6 @@ export async function sendContactMessageAction(
   await sendContactEmail(input);
 
   return {
-    success: "Message sent. We reply within one working day — check the inbox you gave us.",
+    success: "Message sent. We reply within one working day. Check the inbox you gave us.",
   };
 }

@@ -16,6 +16,7 @@ import {
   Th,
 } from "@/components/admin/ui";
 import { LifterMark } from "@/components/brand/lifter-mark";
+import { FlashToast } from "@/components/admin/flash-toast";
 
 export const metadata: Metadata = { title: "Products" };
 
@@ -49,15 +50,21 @@ function ToggleButton({
   );
 }
 
-export default async function AdminProductsPage() {
-  const products = await getAdminProducts();
+export default async function AdminProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ deleted?: string }>;
+}) {
+  const [products, params] = await Promise.all([getAdminProducts(), searchParams]);
 
   return (
     <>
+      {params.deleted === "1" ? <FlashToast message="Product deleted." /> : null}
+
       <AdminPageHeader
         eyebrow="Catalogue"
         title="Products."
-        description="The full range, pricing and stock. Archive a product to hide it without deleting its history."
+        description="The full range, pricing and availability. Archive a product to hide it without deleting its history."
         action={
           <Link href="/admin/products/new" className={buttonClasses("primary")}>
             <Plus aria-hidden="true" />
@@ -93,7 +100,7 @@ export default async function AdminProductsPage() {
                   <Th>Product</Th>
                   <Th>Type</Th>
                   <Th>Collections</Th>
-                  <Th>Stock</Th>
+                  <Th>Availability</Th>
                   <Th>Price</Th>
                   <Th>Status</Th>
                   <Th className="text-right">Actions</Th>
@@ -136,19 +143,27 @@ export default async function AdminProductsPage() {
                       {PRODUCT_TYPE_LABELS[product.product_type]}
                     </Td>
                     <Td className="text-xs text-bone-dim">
-                      {product.collectionNames.length ? product.collectionNames.join(", ") : "—"}
+                      {product.collectionNames.length ? product.collectionNames.join(", ") : "None"}
                     </Td>
                     <Td>
-                      <span className="font-mono text-xs">{product.totalStock}</span>
-                      <span className="block text-[10px] text-bone-dim">
-                        {product.colourCount} {product.colourCount === 1 ? "colour" : "colours"} ·{" "}
-                        {product.variantCount} {product.variantCount === 1 ? "variant" : "variants"}
+                      <span
+                        className={
+                          product.availableCount > 0
+                            ? "font-mono text-xs text-emerald-300"
+                            : "font-mono text-xs text-red-300"
+                        }
+                      >
+                        {product.availableCount === 0
+                          ? "Sold out"
+                          : product.availableCount < product.variantCount
+                            ? "Partly sold out"
+                            : "Available"}
                       </span>
-                      {product.lowStockCount > 0 ? (
-                        <span className="mt-1 inline-block rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 font-mono text-[9px] text-accent">
-                          {product.lowStockCount} low
-                        </span>
-                      ) : null}
+                      <span className="block text-[10px] text-bone-dim">
+                        {product.availableCount} of {product.variantCount}{" "}
+                        {product.variantCount === 1 ? "variant" : "variants"} ·{" "}
+                        {product.colourCount} {product.colourCount === 1 ? "colour" : "colours"}
+                      </span>
                     </Td>
                     <Td className="font-mono text-xs">{formatPriceCents(product.price_cents)}</Td>
                     <Td>
@@ -216,7 +231,10 @@ export default async function AdminProductsPage() {
                         {PRODUCT_TYPE_LABELS[product.product_type]} · {formatPriceCents(product.price_cents)}
                       </p>
                       <p className="mt-1 text-xs text-bone-dim">
-                        {product.totalStock} in stock · {product.colourCount} colours
+                        {product.availableCount === 0
+                          ? "Sold out"
+                          : `${product.availableCount} of ${product.variantCount} available`}{" "}
+                        · {product.colourCount} colours
                         {product.is_active ? "" : " · archived"}
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-1.5">

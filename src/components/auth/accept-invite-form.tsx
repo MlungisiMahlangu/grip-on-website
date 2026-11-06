@@ -132,11 +132,11 @@ export function AcceptInviteForm() {
       <div className="mt-8 space-y-5">
         <p
           role="alert"
-          className="rounded-[var(--radius-card)] border border-red-400/40 bg-red-400/10 px-4 py-3 text-sm leading-relaxed text-red-300"
+          className="rounded-[var(--radius-card)] border border-red-400/40 bg-red-400/10 px-4 py-3 text-body leading-relaxed text-red-300"
         >
           {error ?? "This invite link is invalid or has expired."}
         </p>
-        <p className="text-sm leading-relaxed text-bone-dim">
+        <p className="text-body leading-relaxed text-bone-dim">
           Invite links work once and expire quickly. Ask an admin to send a new invite to your
           email.
         </p>
@@ -152,7 +152,7 @@ export function AcceptInviteForm() {
       {error ? (
         <p
           role="alert"
-          className="rounded-[var(--radius-card)] border border-red-400/40 bg-red-400/10 px-4 py-3 text-sm leading-relaxed text-red-300"
+          className="rounded-[var(--radius-card)] border border-red-400/40 bg-red-400/10 px-4 py-3 text-body leading-relaxed text-red-300"
         >
           {error}
         </p>

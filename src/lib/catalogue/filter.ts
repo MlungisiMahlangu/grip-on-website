@@ -1,10 +1,4 @@
-import {
-  SIZE_ORDER,
-  type CatalogueColour,
-  type CatalogueFilters,
-  type CatalogueProduct,
-  type GarmentSize,
-} from "./types";
+import type { CatalogueFilters, CatalogueProduct } from "./types";
 
 function searchableText(product: CatalogueProduct) {
   return [
@@ -36,54 +30,35 @@ export function filterProducts(
   products: CatalogueProduct[],
   filters: CatalogueFilters = {},
 ): CatalogueProduct[] {
-  const { collection, sizes = [], colours = [], query = "", sort = "featured" } = filters;
+  const { collection, query = "", sort = "newest" } = filters;
 
   const filtered = products.filter((product) => {
     if (collection && !product.collectionSlugs.includes(collection)) return false;
-    if (sizes.length > 0 && !sizes.some((size) => product.sizes.includes(size))) return false;
-    if (
-      colours.length > 0 &&
-      !product.colours.some((colour) => colour.inStock && colours.includes(colour.slug))
-    ) {
-      return false;
-    }
     if (query.trim() && !matchesSearch(product, query)) return false;
     return true;
   });
 
-  if (sort === "price-asc") {
-    return filtered.sort((a, b) => a.priceCents - b.priceCents || a.sortOrder - b.sortOrder);
+  switch (sort) {
+    case "price-asc":
+      return filtered.sort(
+        (a, b) => a.priceCents - b.priceCents || a.sortOrder - b.sortOrder,
+      );
+    case "price-desc":
+      return filtered.sort(
+        (a, b) => b.priceCents - a.priceCents || a.sortOrder - b.sortOrder,
+      );
+    case "best-sellers":
+      return filtered.sort(
+        (a, b) =>
+          Number(b.isFeatured) - Number(a.isFeatured) ||
+          a.sortOrder - b.sortOrder ||
+          Date.parse(b.createdAt) - Date.parse(a.createdAt),
+      );
+    default:
+      return filtered.sort(
+        (a, b) =>
+          Date.parse(b.createdAt) - Date.parse(a.createdAt) ||
+          a.sortOrder - b.sortOrder,
+      );
   }
-
-  if (sort === "price-desc") {
-    return filtered.sort((a, b) => b.priceCents - a.priceCents || a.sortOrder - b.sortOrder);
-  }
-
-  return filtered.sort((a, b) => a.sortOrder - b.sortOrder);
-}
-
-export function getColourOptions(products: CatalogueProduct[]): CatalogueColour[] {
-  const seen = new Map<string, CatalogueColour>();
-
-  for (const product of products) {
-    for (const colour of product.colours) {
-      if (colour.inStock && !seen.has(colour.slug)) {
-        seen.set(colour.slug, colour);
-      }
-    }
-  }
-
-  return [...seen.values()];
-}
-
-export function getSizeOptions(products: CatalogueProduct[]): GarmentSize[] {
-  const seen = new Set<GarmentSize>();
-
-  for (const product of products) {
-    for (const size of product.sizes) {
-      seen.add(size);
-    }
-  }
-
-  return SIZE_ORDER.filter((size) => seen.has(size));
 }

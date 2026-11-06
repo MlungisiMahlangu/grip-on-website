@@ -1,34 +1,43 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
+import { BUSINESS } from "@/lib/business";
 import { SITE } from "@/lib/site";
 
 type StorefrontSettings = {
-  freeDeliveryThresholdCents: number;
   contactEmail: string;
+  contactPhone: string;
   instagram: string | null;
+  deliveryInfo: string;
+  freeDeliveryArea: string;
 };
 
 const StorefrontSettingsContext = createContext<StorefrontSettings>({
-  freeDeliveryThresholdCents: SITE.freeDeliveryThreshold * 100,
   contactEmail: SITE.email,
+  contactPhone: BUSINESS.phone.local,
   instagram: SITE.instagram,
+  deliveryInfo: SITE.deliveryInfo,
+  freeDeliveryArea: SITE.freeDeliveryArea,
 });
 
 export function StorefrontSettingsProvider({
-  freeDeliveryThresholdCents,
   contactEmail,
+  contactPhone,
   instagram,
+  deliveryInfo,
+  freeDeliveryArea,
   children,
 }: {
-  freeDeliveryThresholdCents: number;
   contactEmail: string;
+  contactPhone: string;
   instagram: string | null;
+  deliveryInfo: string;
+  freeDeliveryArea: string;
   children: ReactNode;
 }) {
   return (
     <StorefrontSettingsContext.Provider
-      value={{ freeDeliveryThresholdCents, contactEmail, instagram }}
+      value={{ contactEmail, contactPhone, instagram, deliveryInfo, freeDeliveryArea }}
     >
       {children}
     </StorefrontSettingsContext.Provider>

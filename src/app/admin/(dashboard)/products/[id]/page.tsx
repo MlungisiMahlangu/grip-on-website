@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Boxes, ExternalLink, Plus } from "lucide-react";
+import { ArrowLeft, ExternalLink, Plus, Trash2 } from "lucide-react";
 import { getAdminProduct } from "@/lib/admin/queries";
 import { PRODUCT_TYPE_LABELS } from "@/lib/admin/schemas";
-import { setColourActiveAction } from "@/lib/admin/product-actions";
+import {
+  deleteProductAction,
+  setAvailabilityAction,
+  setColourActiveAction,
+} from "@/lib/admin/product-actions";
 import { formatPriceCents } from "@/lib/utils";
 import { buttonClasses } from "@/components/ui/button";
+import { ConfirmSubmit } from "@/components/ui/confirm-dialog";
 import { AdminPageHeader, AdminPanel } from "@/components/admin/ui";
 import { ProductForm } from "@/components/admin/product-form";
 import { ColourForm } from "@/components/admin/colour-form";
@@ -28,6 +33,9 @@ export default async function EditProductPage({
   if (!data) notFound();
 
   const { product, collections, selectedCollectionIds, colours } = data;
+  const anyAvailable = colours.some((colour) =>
+    colour.variants.some((variant) => variant.is_available),
+  );
 
   return (
     <>
@@ -53,10 +61,13 @@ export default async function EditProductPage({
               View store
               <ExternalLink aria-hidden="true" />
             </Link>
-            <Link href="/admin/inventory" className={buttonClasses("secondary")}>
-              <Boxes aria-hidden="true" />
-              Inventory
-            </Link>
+            <form action={setAvailabilityAction}>
+              <input type="hidden" name="productId" value={product.id} />
+              <input type="hidden" name="value" value={String(!anyAvailable)} />
+              <button type="submit" className={buttonClasses("secondary")}>
+                {anyAvailable ? "Mark sold out" : "Mark available"}
+              </button>
+            </form>
           </>
         }
       />
@@ -84,10 +95,10 @@ export default async function EditProductPage({
           ) : (
             <div className="divide-y divide-line">
               {colours.map((colour) => {
-                const stock = colour.variants.reduce(
-                  (total, variant) => total + variant.stock_quantity,
-                  0,
-                );
+                const availableCount = colour.variants.filter(
+                  (variant) => variant.is_available,
+                ).length;
+                const colourAvailable = availableCount > 0;
                 return (
                   <details key={colour.id} className="group">
                     <summary className="flex min-h-16 cursor-pointer list-none items-center gap-3 px-4 py-3 transition-colors hover:bg-bone/[0.03] sm:px-5">
@@ -122,17 +133,18 @@ export default async function EditProductPage({
                         </p>
                         <p className="mt-0.5 truncate font-mono text-[9px] uppercase tracking-[0.14em] text-bone-dim">
                           {colour.slug} · {colour.variants.length}{" "}
-                          {colour.variants.length === 1 ? "variant" : "variants"} · {stock} in stock
+                          {colour.variants.length === 1 ? "variant" : "variants"} ·{" "}
+                          {availableCount} available
                         </p>
                       </div>
-                      <span className="hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-bone-dim sm:block">
-                        {colour.variants
-                          .map((variant) =>
-                            variant.size === "ONE_SIZE"
-                              ? `OS ${variant.stock_quantity}`
-                              : `${variant.size} ${variant.stock_quantity}`,
-                          )
-                          .join(" · ")}
+                      <span
+                        className={
+                          colourAvailable
+                            ? "hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-emerald-300 sm:block"
+                            : "hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-red-300 sm:block"
+                        }
+                      >
+                        {colourAvailable ? "Available" : "Sold out"}
                       </span>
                     </summary>
 
@@ -143,17 +155,30 @@ export default async function EditProductPage({
                         productType={product.product_type}
                         colour={colour}
                       />
-                      <form action={setColourActiveAction} className="mt-5 border-t border-line pt-4">
-                        <input type="hidden" name="id" value={colour.id} />
-                        <input type="hidden" name="productId" value={product.id} />
-                        <input type="hidden" name="value" value={String(!colour.is_active)} />
-                        <button
-                          type="submit"
-                          className="inline-flex min-h-11 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-bone-dim transition-colors hover:text-bone"
-                        >
-                          {colour.is_active ? "Archive this colour" : "Restore this colour"}
-                        </button>
-                      </form>
+                      <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line pt-4">
+                        <form action={setAvailabilityAction}>
+                          <input type="hidden" name="productId" value={product.id} />
+                          <input type="hidden" name="colourId" value={colour.id} />
+                          <input type="hidden" name="value" value={String(!colourAvailable)} />
+                          <button
+                            type="submit"
+                            className="inline-flex min-h-11 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-bone-dim transition-colors hover:text-accent"
+                          >
+                            {colourAvailable ? "Mark colour sold out" : "Mark colour available"}
+                          </button>
+                        </form>
+                        <form action={setColourActiveAction}>
+                          <input type="hidden" name="id" value={colour.id} />
+                          <input type="hidden" name="productId" value={product.id} />
+                          <input type="hidden" name="value" value={String(!colour.is_active)} />
+                          <button
+                            type="submit"
+                            className="inline-flex min-h-11 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-bone-dim transition-colors hover:text-bone"
+                          >
+                            {colour.is_active ? "Archive this colour" : "Restore this colour"}
+                          </button>
+                        </form>
+                      </div>
                     </div>
                   </details>
                 );
@@ -175,6 +200,28 @@ export default async function EditProductPage({
             </div>
           </details>
         </AdminPanel>
+      </div>
+
+      <div className="mt-8 rounded-[var(--radius-card)] border border-red-400/25 bg-red-400/[0.04] p-4 sm:p-5">
+        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-red-300">
+          Delete product
+        </p>
+        <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-bone-dim">
+          Removes the product, its colourways and its variants from the store. Past orders keep
+          their item details. This cannot be undone.
+        </p>
+        <form action={deleteProductAction} className="mt-4">
+          <input type="hidden" name="id" value={product.id} />
+          <ConfirmSubmit
+            title={`Delete ${product.name}?`}
+            description="The product, its colourways and variants will be removed from the store. Past orders are not affected. This cannot be undone."
+            confirmLabel="Delete product"
+            className={buttonClasses("secondary", "border-red-400/40 text-red-300")}
+          >
+            <Trash2 aria-hidden="true" />
+            Delete product
+          </ConfirmSubmit>
+        </form>
       </div>
     </>
   );

@@ -1,23 +1,33 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Heart, Menu, Search, ShoppingBag } from "lucide-react";
+import { ChevronDown, Heart, Menu, Phone, ShoppingBag } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/site";
+import { phoneFromLocal } from "@/lib/business";
 import { cn } from "@/lib/utils";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useCartStore } from "@/store/cart";
 import { useUIStore } from "@/store/ui";
 import { useWishlistStore } from "@/store/wishlist";
+import { useStorefrontSettings } from "@/components/providers/storefront-settings-provider";
 import { Wordmark } from "@/components/brand/wordmark";
-import { MegaMenu } from "@/components/layout/mega-menu";
+import { SearchOverlay } from "@/components/search/search-overlay";
+
+const MegaMenu = dynamic(
+  () => import("@/components/layout/mega-menu").then((module) => module.MegaMenu),
+  { ssr: false },
+);
 
 export function SiteHeader() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const { contactPhone } = useStorefrontSettings();
+  const phone = phoneFromLocal(contactPhone);
   const openCart = useUIStore((state) => state.openCart);
   const openMenu = useUIStore((state) => state.openMenu);
   const hydrated = useHydrated();
@@ -115,13 +125,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-0.5 sm:gap-1">
-          <Link
-            href="/search"
-            aria-label="Search"
-            className="flex min-h-11 min-w-11 items-center justify-center rounded-[var(--radius-card)] text-bone transition-colors hover:text-accent"
+          <a
+            href={phone.tel}
+            aria-label={`Call Grip On on ${phone.display}`}
+            className="hidden min-h-11 min-w-11 items-center justify-center rounded-[var(--radius-card)] text-bone transition-colors hover:text-accent sm:flex"
           >
-            <Search className="h-[18px] w-[18px]" strokeWidth={1.7} />
-          </Link>
+            <Phone className="h-[18px] w-[18px]" strokeWidth={1.7} />
+          </a>
+
+          <SearchOverlay />
 
           <span className="relative inline-flex">
             <Link
@@ -174,7 +186,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <MegaMenu open={megaOpen} onClose={() => setMegaOpen(false)} />
+      {megaOpen ? <MegaMenu open onClose={() => setMegaOpen(false)} /> : null}
     </header>
   );
 }

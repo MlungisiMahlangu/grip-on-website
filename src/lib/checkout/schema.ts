@@ -1,4 +1,15 @@
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
+import {
+  EMAIL_PATTERN,
+  MOBILE_PATTERN,
+  cleanTrimmed,
+  emailSchema,
+  mobileSchema,
+  nameSchema,
+  normaliseContact,
+  normaliseOrderNumber,
+  postalCodeSchema,
+} from "@/lib/validation";
 
 export const PROVINCES = [
   "Eastern Cape",
@@ -14,54 +25,60 @@ export const PROVINCES = [
 
 export type Province = (typeof PROVINCES)[number];
 
-const phonePattern = /^(\+27|27|0)[6-8][0-9]{8}$/;
+const addressLineSchema = z
+  .string()
+  .transform(cleanTrimmed)
+  .pipe(
+    z
+      .string()
+      .min(5, "Enter your street address.")
+      .max(120, "Keep your address under 120 characters."),
+  );
 
-export function digitsOnly(value: string) {
-  return value.replace(/[^0-9+]/g, "");
-}
+const localitySchema = z
+  .string()
+  .transform(cleanTrimmed)
+  .pipe(
+    z
+      .string()
+      .min(2, "Enter at least 2 characters.")
+      .max(80, "Keep this under 80 characters."),
+  );
 
-export const checkoutSchema = z.object({
-  firstName: z
-    .string()
-    .trim()
-    .min(1, "Enter your first name.")
-    .max(60, "That name is too long."),
-  lastName: z
-    .string()
-    .trim()
-    .min(1, "Enter your last name.")
-    .max(60, "That name is too long."),
-  email: z.email("Enter a valid email address.").trim().max(160),
-  phone: z
-    .string()
-    .trim()
-    .min(1, "Enter your mobile number.")
-    .refine((value) => phonePattern.test(digitsOnly(value)), {
-      message: "Use a valid South African mobile number.",
-    }),
-  addressLine1: z
-    .string()
-    .trim()
-    .min(1, "Enter your street address.")
-    .max(160, "That address is too long."),
-  addressLine2: z.string().trim().max(160, "That address is too long.").optional(),
-  suburb: z
-    .string()
-    .trim()
-    .min(1, "Enter your suburb.")
-    .max(100, "That suburb is too long."),
-  city: z
-    .string()
-    .trim()
-    .min(1, "Enter your city or town.")
-    .max(100, "That city is too long."),
+const optionalLineSchema = z
+  .string()
+  .transform(cleanTrimmed)
+  .pipe(z.string().max(120, "Keep this under 120 characters."))
+  .optional();
+
+const optionalNotesSchema = z
+  .string()
+  .transform(cleanTrimmed)
+  .pipe(z.string().max(300, "Keep notes under 300 characters."))
+  .optional();
+
+export const checkoutDetailsSchema = z.object({
+  firstName: nameSchema,
+  lastName: nameSchema,
+  email: emailSchema,
+  phone: mobileSchema,
+  addressLine1: addressLineSchema,
+  addressLine2: optionalLineSchema,
+  suburb: localitySchema,
+  city: localitySchema,
   province: z.enum(PROVINCES, "Select your province."),
-  postalCode: z
-    .string()
-    .trim()
-    .regex(/^[0-9]{4}$/, "Enter a 4-digit postal code."),
-  deliveryNotes: z.string().trim().max(500, "Keep notes under 500 characters.").optional(),
+  postalCode: postalCodeSchema,
+  deliveryArea: z.enum(["johannesburg", "outside"], "Choose your delivery area."),
+  deliveryNotes: optionalNotesSchema,
   paymentMethod: z.literal("cod"),
+});
+
+export type CheckoutDetails = z.infer<typeof checkoutDetailsSchema>;
+
+export const checkoutSchema = checkoutDetailsSchema.extend({
+  termsAccepted: z
+    .boolean()
+    .refine((value) => value, "Please accept the terms to place your order."),
 });
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
@@ -76,27 +93,37 @@ export const checkoutItemSchema = z.object({
 });
 
 export const checkoutPayloadSchema = z.object({
-  customer: checkoutSchema,
+  customer: checkoutDetailsSchema,
   items: z
     .array(checkoutItemSchema)
     .min(1, "Your bag is empty.")
     .max(25, "Too many items in one order."),
-  discountCode: z
-    .string()
-    .trim()
-    .max(30, "That code is too long.")
-    .transform((value) => value.toUpperCase())
-    .optional(),
   subscribe: z.boolean().optional(),
+  idempotencyKey: z.uuid("That order could not be verified. Refresh and try again."),
 });
 
 export type CheckoutPayload = z.infer<typeof checkoutPayloadSchema>;
 
+const orderNumberSchema = z
+  .string()
+  .transform(normaliseOrderNumber)
+  .refine((value) => /^GO-[0-9]{4}-[0-9]{4}$/.test(value), {
+    message: "Enter the order number from your email, like GO-2026-0001.",
+  });
+
+const contactSchema = z
+  .string()
+  .transform(cleanTrimmed)
+  .transform(normaliseContact)
+  .refine(
+    (value) =>
+      value.includes("@") ? EMAIL_PATTERN.test(value) : MOBILE_PATTERN.test(value),
+    { message: "Enter the email or 10-digit mobile number used at checkout." },
+  );
+
 export const trackOrderSchema = z.object({
-  orderNumber: z
-    .string()
-    .trim()
-    .min(1, "Enter your order number.")
-    .max(30, "That order number is too long."),
-  contact: z.string().trim().min(1, "Enter the email or phone used at checkout.").max(160),
+  orderNumber: orderNumberSchema,
+  contact: contactSchema,
 });
+
+export type TrackOrderInput = z.infer<typeof trackOrderSchema>;

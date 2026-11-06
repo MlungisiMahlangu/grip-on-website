@@ -28,6 +28,11 @@ export async function createClient(): Promise<SupabaseClient<Database>> {
     env.NEXT_PUBLIC_SUPABASE_URL,
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
+      cookieOptions: {
+        path: "/",
+        sameSite: "lax",
+        secure: env.NEXT_PUBLIC_SITE_URL.startsWith("https://"),
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll();

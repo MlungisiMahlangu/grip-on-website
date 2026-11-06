@@ -14,13 +14,12 @@ export const SIZE_LABELS: Record<GarmentSize, string> = {
   ONE_SIZE: "One size",
 };
 
-export const LOW_STOCK_THRESHOLD = 5;
+export const MAX_ITEM_QUANTITY = 10;
 
 export type CatalogueSize = {
   variantId: string;
   sku: string;
   size: GarmentSize;
-  stock: number;
   inStock: boolean;
 };
 
@@ -33,7 +32,6 @@ export type CatalogueColour = {
   frontImage: string | null;
   backImage: string | null;
   sizes: CatalogueSize[];
-  stock: number;
   inStock: boolean;
 };
 
@@ -49,14 +47,13 @@ export type CatalogueProduct = {
   productType: ProductType;
   isFeatured: boolean;
   sortOrder: number;
+  createdAt: string;
   updatedAt: string;
   collectionSlugs: string[];
   colours: CatalogueColour[];
-  totalStock: number;
   sizes: GarmentSize[];
   images: { front: string | null; back: string | null };
   defaultColourId: string | null;
-  isLowStock: boolean;
 };
 
 export type CatalogueCollection = {
@@ -74,12 +71,10 @@ export type Catalogue = {
   collections: CatalogueCollection[];
 };
 
-export type CatalogueSort = "featured" | "price-asc" | "price-desc";
+export type CatalogueSort = "newest" | "price-asc" | "price-desc" | "best-sellers";
 
 export type CatalogueFilters = {
   collection?: string;
-  sizes?: GarmentSize[];
-  colours?: string[];
   query?: string;
   sort?: CatalogueSort;
 };

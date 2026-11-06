@@ -15,6 +15,13 @@
   --radius: 6px;
   --announcement-height: 2.25rem;
   --header-height: 4rem;
+  --type-hero: clamp(2.25rem, 5vw + 1rem, 4.5rem);
+  --type-h2: clamp(1.75rem, 2.5vw + 1rem, 2.75rem);
+  --type-h3: clamp(1.25rem, 1vw + 0.95rem, 1.5rem);
+  --type-body: clamp(1rem, 0.15vw + 0.96rem, 1.0625rem);
+  --type-small: 0.875rem;
+  --type-caption: 0.8125rem;
+  --space-section: clamp(3rem, 5.5vw, 7.5rem);
 }
 
 @theme inline {
@@ -33,6 +40,18 @@
   --font-sans: var(--font-inter-tight);
   --font-mono: var(--font-jetbrains);
   --radius-card: var(--radius);
+  --text-hero: var(--type-hero);
+  --text-hero--line-height: 1.06;
+  --text-h2: var(--type-h2);
+  --text-h2--line-height: 1.1;
+  --text-h3: var(--type-h3);
+  --text-h3--line-height: 1.2;
+  --text-body: var(--type-body);
+  --text-body--line-height: 1.65;
+  --text-small: var(--type-small);
+  --text-small--line-height: 1.6;
+  --text-caption: var(--type-caption);
+  --text-caption--line-height: 1.5;
 }
 
 @layer base {
@@ -43,7 +62,6 @@
   html {
     background-color: var(--ink);
     color: var(--bone);
-    scroll-behavior: smooth;
     scroll-padding-top: 6rem;
     -webkit-text-size-adjust: 100%;
   }
@@ -53,6 +71,8 @@
     background-color: var(--ink);
     color: var(--bone);
     font-family: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: var(--type-body);
+    line-height: 1.65;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -65,12 +85,26 @@
     font-family: var(--font-anton), "Arial Narrow", Impact, sans-serif;
     font-weight: 400;
     text-transform: uppercase;
-    line-height: 0.88;
+    line-height: 1.1;
     letter-spacing: -0.01em;
     text-wrap: balance;
   }
 
+  h1 {
+    font-size: var(--type-hero);
+    line-height: 1.06;
+  }
+
+  h2 {
+    font-size: var(--type-h2);
+  }
+
+  h3 {
+    font-size: var(--type-h3);
+  }
+
   p {
+    line-height: 1.65;
     text-wrap: pretty;
   }
 
@@ -143,8 +177,16 @@
     font-family: var(--font-anton), "Arial Narrow", Impact, sans-serif;
     font-weight: 400;
     text-transform: uppercase;
-    line-height: 0.86;
+    line-height: 1.06;
     letter-spacing: -0.01em;
+  }
+
+  .section-y {
+    padding-block: var(--space-section);
+  }
+
+  .measure {
+    max-width: 65ch;
   }
 
   .skip-link {
@@ -184,6 +226,13 @@
   .link-underline:focus-visible {
     background-size: 100% 1px;
   }
+
+  .prose-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    margin-block: -0.75rem;
+  }
 }
 
 @keyframes marquee {
@@ -212,6 +261,17 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -247,11 +307,11 @@
   animation: pulse-mark 1.8s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+.animate-toast {
+  animation: toast-in 200ms ease-out both;
+}
 
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {

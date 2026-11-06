@@ -27,7 +27,7 @@ export default async function AdminDashboardPage() {
       <AdminPageHeader
         eyebrow="Overview"
         title="Dashboard."
-        description="Live orders, revenue and stock across the store."
+        description="Live orders, revenue and activity across the store."
         action={<RealtimeRefresh channelName="dashboard" />}
       />
 
@@ -50,10 +50,10 @@ export default async function AdminDashboardPage() {
           hint={`${data.orders30} ${data.orders30 === 1 ? "order" : "orders"}, excluding cancelled.`}
         />
         <StatCard
-          label="Low stock"
-          value={String(data.lowStockCount)}
-          hint={`${data.outOfStockCount} variants out of stock. ${data.activeProducts} active products, ${data.activeCollections} collections.`}
-          href="/admin/inventory?level=low"
+          label="Active products"
+          value={String(data.activeProducts)}
+          hint={`${data.activeCollections} ${data.activeCollections === 1 ? "collection" : "collections"} live on the store.`}
+          href="/admin/products"
         />
       </div>
 
@@ -152,45 +152,28 @@ export default async function AdminDashboardPage() {
           )}
         </AdminPanel>
 
-        <AdminPanel
-          title="Low stock"
-          meta={
-            <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-bone-dim">
-              {data.lowStockCount} flagged
-            </span>
-          }
-          className="xl:col-span-4"
-          action={
-            <Link
-              href="/admin/inventory?level=low"
-              className="inline-flex min-h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-[0.14em] text-accent hover:text-bone"
-            >
-              Manage <ArrowRight className="h-3 w-3" aria-hidden="true" />
-            </Link>
-          }
-        >
-          {data.lowStock.length === 0 ? (
-            <AdminEmpty
-              title="Stock levels are healthy."
-              body="Nothing is below the low-stock threshold right now. Out-of-stock variants are hidden from the storefront."
-            />
-          ) : (
-            <ul className="divide-y divide-line">
-              {data.lowStock.map((variant) => (
-                <li key={variant.variantId} className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm text-bone">{variant.productName}</p>
-                    <p className="truncate font-mono text-[9px] uppercase tracking-[0.14em] text-bone-dim">
-                      {variant.colourName} · {variant.size === "ONE_SIZE" ? "One size" : variant.size} · {variant.sku}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-full border border-accent/40 bg-accent/10 px-2 py-1 font-mono text-[10px] text-accent">
-                    {variant.stock} left
+        <AdminPanel title="Quick links" className="xl:col-span-4">
+          <ul className="divide-y divide-line">
+            {[
+              { href: "/admin/products/new", label: "Add a product", hint: "Create a new piece" },
+              { href: "/admin/orders", label: "Fulfil orders", hint: "Update status and tracking" },
+              { href: "/admin/messages", label: "Read messages", hint: "Customer enquiries" },
+              { href: "/admin/settings", label: "Store settings", hint: "Announcement and details" },
+            ].map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="flex min-h-16 items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-bone/[0.03] sm:px-5"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-sm text-bone">{link.label}</span>
+                    <span className="mt-0.5 block text-xs text-bone-dim">{link.hint}</span>
                   </span>
-                </li>
-              ))}
-            </ul>
-          )}
+                  <ArrowRight className="h-4 w-4 shrink-0 text-bone-dim" aria-hidden="true" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </AdminPanel>
       </div>
     </>

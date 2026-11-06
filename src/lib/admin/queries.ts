@@ -1,9 +1,9 @@
 import "server-only";
 
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { createClient } from "@/lib/supabase/server";
 import { mediaUrl } from "@/lib/supabase/media";
-import { SIZE_ORDER, LOW_STOCK_THRESHOLD } from "@/lib/catalogue/types";
+import { SIZE_ORDER } from "@/lib/catalogue/types";
 import type {
   Collection,
   Order,
@@ -50,19 +50,9 @@ export type DashboardData = {
   pendingOrders: number;
   revenue30: number;
   orders30: number;
-  lowStockCount: number;
-  outOfStockCount: number;
   activeProducts: number;
   activeCollections: number;
   recentOrders: Order[];
-  lowStock: {
-    variantId: string;
-    productName: string;
-    colourName: string;
-    size: string;
-    stock: number;
-    sku: string;
-  }[];
 };
 
 function startOfSastDay() {
@@ -80,93 +70,48 @@ export async function getDashboardData(): Promise<DashboardData> {
   const supabase = await createClient();
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-  const [
-    recentResult,
-    todayResult,
-    revenueResult,
-    pendingResult,
-    lowStockResult,
-    outOfStockResult,
-    productsResult,
-    collectionsResult,
-    productNamesResult,
-    colourNamesResult,
-  ] = await Promise.all([
-    supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(8),
-    supabase
-      .from("orders")
-      .select("id", { count: "exact", head: true })
-      .gte("created_at", startOfSastDay())
-      .neq("status", "cancelled"),
-    supabase
-      .from("orders")
-      .select("total_cents")
-      .gte("created_at", since)
-      .neq("status", "cancelled"),
-    supabase
-      .from("orders")
-      .select("id", { count: "exact", head: true })
-      .in("status", PENDING_STATUSES),
-    supabase
-      .from("product_variants")
-      .select("*")
-      .eq("is_active", true)
-      .gt("stock_quantity", 0)
-      .lte("stock_quantity", LOW_STOCK_THRESHOLD)
-      .order("stock_quantity", { ascending: true }),
-    supabase
-      .from("product_variants")
-      .select("id", { count: "exact", head: true })
-      .eq("is_active", true)
-      .eq("stock_quantity", 0),
-    supabase.from("products").select("id,name").eq("is_active", true),
-    supabase.from("collections").select("id", { count: "exact", head: true }).eq("is_active", true),
-    supabase.from("products").select("id,name"),
-    supabase.from("product_colours").select("id,name"),
-  ]);
+  const [recentResult, todayResult, revenueResult, pendingResult, productsResult, collectionsResult] =
+    await Promise.all([
+      supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(8),
+      supabase
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", startOfSastDay())
+        .neq("status", "cancelled"),
+      supabase
+        .from("orders")
+        .select("total_cents")
+        .gte("created_at", since)
+        .neq("status", "cancelled"),
+      supabase
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .in("status", PENDING_STATUSES),
+      supabase.from("products").select("id,name").eq("is_active", true),
+      supabase.from("collections").select("id", { count: "exact", head: true }).eq("is_active", true),
+    ]);
 
   const failed = [
     recentResult,
     todayResult,
     revenueResult,
     pendingResult,
-    lowStockResult,
-    outOfStockResult,
     productsResult,
     collectionsResult,
-    productNamesResult,
-    colourNamesResult,
   ].find((result) => result.error);
 
   if (failed?.error) throw new Error(`Dashboard query failed: ${failed.error.message}`);
 
-  const productNames = new Map((productNamesResult.data ?? []).map((row) => [row.id, row.name]));
-  const colourNames = new Map((colourNamesResult.data ?? []).map((row) => [row.id, row.name]));
   const products = productsResult.data ?? [];
-  const productIds = new Set(products.map((product) => product.id));
-
-  const lowStockVariants = (lowStockResult.data ?? []).filter((variant) =>
-    productIds.has(variant.product_id),
-  );
 
   return {
     ordersToday: todayResult.count ?? 0,
     pendingOrders: pendingResult.count ?? 0,
     revenue30: sum((revenueResult.data ?? []).map((order) => order.total_cents)),
     orders30: revenueResult.data?.length ?? 0,
-    lowStockCount: lowStockVariants.length,
-    outOfStockCount: outOfStockResult.count ?? 0,
     activeProducts: products.length,
     activeCollections: collectionsResult.count ?? 0,
     recentOrders: recentResult.data ?? [],
-    lowStock: lowStockVariants.slice(0, 8).map((variant) => ({
-      variantId: variant.id,
-      productName: productNames.get(variant.product_id) ?? "Product",
-      colourName: colourNames.get(variant.colour_id) ?? "Colour",
-      size: variant.size,
-      stock: variant.stock_quantity,
-      sku: variant.sku,
-    })),
   };
 }
 
@@ -274,8 +219,7 @@ export async function getOrderDetail(id: string): Promise<AdminOrderDetail | nul
 export type AdminProductSummary = Product & {
   colourCount: number;
   variantCount: number;
-  totalStock: number;
-  lowStockCount: number;
+  availableCount: number;
   image: string | null;
   collectionNames: string[];
 };
@@ -324,10 +268,7 @@ export async function getAdminProducts(): Promise<AdminProductSummary[]> {
       ...product,
       colourCount: productColours.length,
       variantCount: productVariants.length,
-      totalStock: sum(productVariants.map((variant) => variant.stock_quantity)),
-      lowStockCount: productVariants.filter(
-        (variant) => variant.stock_quantity > 0 && variant.stock_quantity <= LOW_STOCK_THRESHOLD,
-      ).length,
+      availableCount: productVariants.filter((variant) => variant.is_available).length,
       image: mediaUrl(firstColour?.front_image_path ?? null),
       collectionNames: links
         .filter((link) => link.product_id === product.id)
@@ -430,91 +371,6 @@ export async function getAdminCollection(id: string) {
     collection: collectionResult.data,
     productCount: linksResult.count ?? 0,
   };
-}
-
-export type InventoryRow = {
-  variant: ProductVariant;
-  productName: string;
-  productSlug: string;
-  colourName: string;
-  colourHex: string;
-  image: string | null;
-};
-
-export type InventoryResult = {
-  rows: InventoryRow[];
-  total: number;
-  low: number;
-  out: number;
-  stock: number;
-};
-
-export async function getInventory(filters: {
-  query?: string;
-  level?: "all" | "low" | "out";
-}): Promise<InventoryResult> {
-  const supabase = await createClient();
-  const [variantsResult, productsResult, coloursResult] = await Promise.all([
-    supabase.from("product_variants").select("*").eq("is_active", true),
-    supabase.from("products").select("id,name,slug"),
-    supabase.from("product_colours").select("*"),
-  ]);
-
-  const failed = [variantsResult, productsResult, coloursResult].find((result) => result.error);
-  if (failed?.error) throw new Error(`Inventory query failed: ${failed.error.message}`);
-
-  const products = new Map((productsResult.data ?? []).map((product) => [product.id, product]));
-  const colours = new Map((coloursResult.data ?? []).map((colour) => [colour.id, colour]));
-  const term = searchTerm(filters.query).toLowerCase();
-
-  let rows: InventoryRow[] = (variantsResult.data ?? [])
-    .map((variant) => {
-      const product = products.get(variant.product_id);
-      const colour = colours.get(variant.colour_id);
-      if (!product || !colour) return null;
-      return {
-        variant,
-        productName: product.name,
-        productSlug: product.slug,
-        colourName: colour.name,
-        colourHex: colour.hex,
-        image: mediaUrl(colour.front_image_path),
-      } satisfies InventoryRow;
-    })
-    .filter((row): row is InventoryRow => Boolean(row));
-
-  const total = rows.length;
-  const low = rows.filter(
-    (row) => row.variant.stock_quantity > 0 && row.variant.stock_quantity <= LOW_STOCK_THRESHOLD,
-  ).length;
-  const out = rows.filter((row) => row.variant.stock_quantity === 0).length;
-  const stock = sum(rows.map((row) => row.variant.stock_quantity));
-
-  if (filters.level === "low") {
-    rows = rows.filter(
-      (row) => row.variant.stock_quantity > 0 && row.variant.stock_quantity <= LOW_STOCK_THRESHOLD,
-    );
-  } else if (filters.level === "out") {
-    rows = rows.filter((row) => row.variant.stock_quantity === 0);
-  }
-
-  if (term) {
-    rows = rows.filter((row) =>
-      [row.productName, row.colourName, row.variant.sku, row.variant.size]
-        .join(" ")
-        .toLowerCase()
-        .includes(term),
-    );
-  }
-
-  rows.sort(
-    (a, b) =>
-      a.productName.localeCompare(b.productName) ||
-      a.colourName.localeCompare(b.colourName) ||
-      sizeRank(a.variant.size) - sizeRank(b.variant.size),
-  );
-
-  return { rows, total, low, out, stock };
 }
 
 export type { ProductCollection };

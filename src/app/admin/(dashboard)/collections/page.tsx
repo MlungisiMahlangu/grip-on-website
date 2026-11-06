@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Archive, ArchiveRestore, CheckCircle2, Pencil, Plus } from "lucide-react";
+import { Archive, ArchiveRestore, Pencil, Plus } from "lucide-react";
 import { getAdminCollections } from "@/lib/admin/queries";
 import { toggleCollectionActiveAction } from "@/lib/admin/collection-actions";
 import { buttonClasses } from "@/components/ui/button";
@@ -11,16 +11,16 @@ import {
   AdminPanel,
 } from "@/components/admin/ui";
 import { LifterMark } from "@/components/brand/lifter-mark";
+import { FlashToast } from "@/components/admin/flash-toast";
 
 export const metadata: Metadata = { title: "Collections" };
 
 export default async function AdminCollectionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ saved?: string }>;
+  searchParams: Promise<{ saved?: string; deleted?: string }>;
 }) {
-  const { saved } = await searchParams;
-  const collections = await getAdminCollections();
+  const [params, collections] = await Promise.all([searchParams, getAdminCollections()]);
 
   return (
     <>
@@ -36,15 +36,8 @@ export default async function AdminCollectionsPage({
         }
       />
 
-      {saved === "1" ? (
-        <p
-          role="status"
-          className="mb-5 flex items-center gap-2 rounded-[var(--radius-card)] border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300"
-        >
-          <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-          Collection saved.
-        </p>
-      ) : null}
+      {params.saved === "1" ? <FlashToast message="Collection saved." /> : null}
+      {params.deleted === "1" ? <FlashToast message="Collection deleted." /> : null}
 
       {collections.length === 0 ? (
         <AdminPanel title="Collections">

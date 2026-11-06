@@ -5,7 +5,9 @@ import Image from "next/image";
 import { ImagePlus, Loader2, Trash2, Upload } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { MEDIA_BUCKET, mediaUrl } from "@/lib/supabase/media";
+import { toast } from "@/lib/toast";
 import { buttonClasses } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
 const ACCEPTED = ["image/webp", "image/jpeg", "image/png", "image/avif"];
@@ -82,17 +84,20 @@ export function SingleImageField({
   folder,
   defaultValue,
   hint,
+  onDirty,
 }: {
   label: string;
   name: string;
   folder: string;
   defaultValue?: string | null;
   hint?: string;
+  onDirty?: () => void;
 }) {
   const id = useId();
   const [value, setValue] = useState(defaultValue ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const preview = mediaUrl(value || null);
 
   const handleFiles = async (files: File[]) => {
@@ -101,8 +106,12 @@ export function SingleImageField({
     try {
       const path = await uploadImage(files[0], folder);
       setValue(path);
+      onDirty?.();
+      toast.success("Image uploaded.");
     } catch (uploadError) {
-      setError(uploadError instanceof Error ? uploadError.message : "Upload failed.");
+      const message = uploadError instanceof Error ? uploadError.message : "Upload failed.";
+      setError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
@@ -133,7 +142,7 @@ export function SingleImageField({
           {value ? (
             <button
               type="button"
-              onClick={() => setValue("")}
+              onClick={() => setConfirmRemove(true)}
               className="flex min-h-11 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-bone-dim transition-colors hover:text-red-300"
             >
               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -148,6 +157,20 @@ export function SingleImageField({
           ) : null}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmRemove}
+        onClose={() => setConfirmRemove(false)}
+        onConfirm={() => {
+          setConfirmRemove(false);
+          setValue("");
+          onDirty?.();
+          toast.success("Image removed.");
+        }}
+        title="Remove this image?"
+        description="The image is taken off this form. Save the form to apply the change. The file stays in storage."
+        confirmLabel="Remove image"
+      />
     </div>
   );
 }
@@ -159,6 +182,7 @@ export function GalleryField({
   defaultValue = [],
   max = 8,
   hint,
+  onDirty,
 }: {
   label: string;
   name: string;
@@ -166,11 +190,13 @@ export function GalleryField({
   defaultValue?: string[];
   max?: number;
   hint?: string;
+  onDirty?: () => void;
 }) {
   const id = useId();
   const [value, setValue] = useState<string[]>(defaultValue);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [removePath, setRemovePath] = useState<string | null>(null);
 
   const handleFiles = async (files: File[]) => {
     setError("");
@@ -187,8 +213,12 @@ export function GalleryField({
         uploaded.push(await uploadImage(file, folder));
       }
       setValue((current) => [...current, ...uploaded]);
+      onDirty?.();
+      toast.success(uploaded.length === 1 ? "Image uploaded." : `${uploaded.length} images uploaded.`);
     } catch (uploadError) {
-      setError(uploadError instanceof Error ? uploadError.message : "Upload failed.");
+      const message = uploadError instanceof Error ? uploadError.message : "Upload failed.";
+      setError(message);
+      toast.error(message);
     } finally {
       setBusy(false);
     }
@@ -217,7 +247,7 @@ export function GalleryField({
                 </div>
                 <button
                   type="button"
-                  onClick={() => setValue((current) => current.filter((item) => item !== path))}
+                  onClick={() => setRemovePath(path)}
                   className="absolute -right-1.5 -top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-line bg-ink text-bone-dim transition-colors hover:border-red-400/50 hover:text-red-300"
                   aria-label="Remove gallery image"
                 >
@@ -247,6 +277,20 @@ export function GalleryField({
           {error}
         </p>
       ) : null}
+
+      <ConfirmDialog
+        open={removePath !== null}
+        onClose={() => setRemovePath(null)}
+        onConfirm={() => {
+          setValue((current) => current.filter((item) => item !== removePath));
+          setRemovePath(null);
+          onDirty?.();
+          toast.success("Image removed from the gallery.");
+        }}
+        title="Remove this gallery image?"
+        description="The image is taken off this form. Save the colourway to apply the change. The file stays in storage."
+        confirmLabel="Remove image"
+      />
     </div>
   );
 }

@@ -1,16 +1,13 @@
 "use server";
 
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { createPublicClient } from "@/lib/supabase/server";
 import { sendOrderEmails } from "@/lib/email/order-emails";
 import { getTrackedOrder, setOrderAccess } from "@/lib/orders/track";
 import type { TrackedOrder } from "@/lib/orders/types";
+import { checkRateLimit, requestKey, retryMessage } from "@/lib/rate-limit";
 import type { DiscountKind } from "@/lib/supabase/types";
-import {
-  checkoutPayloadSchema,
-  digitsOnly,
-  trackOrderSchema,
-} from "./schema";
+import { checkoutPayloadSchema, trackOrderSchema } from "./schema";
 
 export type PlaceOrderResult =
   | { ok: true; orderNumber: string }
@@ -96,6 +93,11 @@ export async function applyDiscountAction(
 }
 
 export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
+  const limited = checkRateLimit(await requestKey("checkout"), 10, 10 * 60_000);
+  if (!limited.ok) {
+    return { ok: false, message: retryMessage(limited.retryAfterSeconds) };
+  }
+
   const parsed = checkoutPayloadSchema.safeParse(input);
   if (!parsed.success) {
     return {
@@ -104,7 +106,7 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
     };
   }
 
-  const { customer, items, discountCode, subscribe } = parsed.data;
+  const { customer, items, subscribe, idempotencyKey } = parsed.data;
   const supabase = createPublicClient();
 
   const { data, error } = await supabase.rpc("create_order", {
@@ -117,17 +119,19 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
         first_name: customer.firstName,
         last_name: customer.lastName,
         email: customer.email,
-        phone: digitsOnly(customer.phone),
+        phone: customer.phone,
         address_line1: customer.addressLine1,
         address_line2: customer.addressLine2 || null,
         suburb: customer.suburb,
         city: customer.city,
         province: customer.province,
         postal_code: customer.postalCode,
+        delivery_area: customer.deliveryArea,
         delivery_notes: customer.deliveryNotes || null,
       },
-      discount_code: discountCode ?? null,
+      discount_code: null,
       subscribe: subscribe === true,
+      idempotency_key: idempotencyKey,
     },
   });
 
@@ -163,9 +167,15 @@ export async function placeOrder(input: unknown): Promise<PlaceOrderResult> {
   return { ok: true, orderNumber: created.order_number };
 }
 
+export type TrackOrderFieldErrors = {
+  orderNumber?: string;
+  contact?: string;
+};
+
 export type TrackOrderState = {
   status: "idle" | "error" | "notfound" | "found";
   message?: string;
+  fieldErrors?: TrackOrderFieldErrors;
   order?: TrackedOrder;
   orderNumber?: string;
   contact?: string;
@@ -175,6 +185,11 @@ export async function trackOrderAction(
   _previous: TrackOrderState,
   formData: FormData,
 ): Promise<TrackOrderState> {
+  const limited = checkRateLimit(await requestKey("track-order"), 20, 10 * 60_000);
+  if (!limited.ok) {
+    return { status: "error", message: retryMessage(limited.retryAfterSeconds) };
+  }
+
   const parsed = trackOrderSchema.safeParse({
     orderNumber: formData.get("orderNumber"),
     contact: formData.get("contact"),
@@ -186,9 +201,21 @@ export async function trackOrderAction(
   };
 
   if (!parsed.success) {
+    const fieldErrors: TrackOrderFieldErrors = {};
+    for (const issue of parsed.error.issues) {
+      const key = issue.path[0];
+      if (key === "orderNumber" && !fieldErrors.orderNumber) {
+        fieldErrors.orderNumber = issue.message;
+      }
+      if (key === "contact" && !fieldErrors.contact) {
+        fieldErrors.contact = issue.message;
+      }
+    }
+
     return {
       status: "error",
       message: parsed.error.issues[0]?.message ?? "Check your details and try again.",
+      fieldErrors,
       ...raw,
     };
   }

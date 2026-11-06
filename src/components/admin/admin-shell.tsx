@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
   ArrowUpRight,
-  Boxes,
   Layers,
   LayoutDashboard,
   LogOut,
@@ -22,8 +21,11 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FEATURES } from "@/lib/features";
 import { useDialog } from "@/hooks/use-dialog";
 import { signOutAction } from "@/lib/admin/auth-actions";
+import { useAdminBadges, type AdminBadgeCounts } from "@/components/admin/admin-badges";
+import { ConfirmSubmit } from "@/components/ui/confirm-dialog";
 
 const NAV_GROUPS = [
   {
@@ -33,7 +35,6 @@ const NAV_GROUPS = [
       { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
       { href: "/admin/products", label: "Products", icon: Package },
       { href: "/admin/collections", label: "Collections", icon: Layers },
-      { href: "/admin/inventory", label: "Inventory", icon: Boxes },
     ],
   },
   {
@@ -63,7 +64,13 @@ function isActive(pathname: string, href: string, exact?: boolean) {
   return exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
+function AdminNav({
+  onNavigate,
+  badges,
+}: {
+  onNavigate?: () => void;
+  badges: AdminBadgeCounts;
+}) {
   const pathname = usePathname();
 
   return (
@@ -77,6 +84,13 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
             {group.items.map((item) => {
               const active = isActive(pathname, item.href, "exact" in item ? item.exact : false);
               const Icon = item.icon;
+              const count =
+                item.href === "/admin/orders"
+                  ? badges.orders
+                  : item.href === "/admin/messages"
+                    ? badges.messages
+                    : 0;
+              const soon = item.href === "/admin/discounts" && !FEATURES.discounts;
               return (
                 <Link
                   key={item.href}
@@ -91,7 +105,27 @@ function AdminNav({ onNavigate }: { onNavigate?: () => void }) {
                   )}
                 >
                   <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  {item.label}
+                  <span className="truncate">{item.label}</span>
+                  {count > 0 ? (
+                    <span
+                      className={cn(
+                        "ml-auto rounded-full px-1.5 py-0.5 font-mono text-[9px] leading-none",
+                        active ? "bg-accent-ink text-accent" : "bg-accent text-accent-ink",
+                      )}
+                      aria-label={`${count} new`}
+                    >
+                      {count > 99 ? "99+" : count}
+                    </span>
+                  ) : soon ? (
+                    <span
+                      className={cn(
+                        "ml-auto rounded-full border px-1.5 py-0.5 font-mono text-[8px] leading-none",
+                        active ? "border-accent-ink/40 text-accent-ink" : "border-line text-bone-dim",
+                      )}
+                    >
+                      Soon
+                    </span>
+                  ) : null}
                 </Link>
               );
             })}
@@ -138,13 +172,17 @@ function Account({ email, name }: { email: string; name: string }) {
           View store
         </Link>
         <form action={signOutAction}>
-          <button
-            type="submit"
+          <ConfirmSubmit
+            title="Sign out of the admin?"
+            description="You will need your email and password to sign back in."
+            confirmLabel="Sign out"
+            cancelLabel="Stay signed in"
+            tone="primary"
             className="flex min-h-11 w-full items-center gap-3 rounded-[var(--radius-card)] px-3 font-mono text-[11px] uppercase tracking-[0.16em] text-bone-dim transition-colors hover:bg-bone/5 hover:text-bone"
           >
             <LogOut className="h-4 w-4" aria-hidden="true" />
             Sign out
-          </button>
+          </ConfirmSubmit>
         </form>
       </div>
     </div>
@@ -163,6 +201,7 @@ export function AdminShell({
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
   const drawerRef = useDialog<HTMLDivElement>(open, close);
+  const badges = useAdminBadges();
 
   return (
     <div className="min-h-svh bg-ink text-bone">
@@ -173,7 +212,7 @@ export function AdminShell({
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-line bg-ink-soft px-4 py-5 lg:flex">
         <Brand />
         <div className="mt-8 flex min-h-0 flex-1 flex-col">
-          <AdminNav />
+          <AdminNav badges={badges} />
           <Account email={email} name={name} />
         </div>
       </aside>
@@ -218,7 +257,7 @@ export function AdminShell({
               </button>
             </div>
             <div className="mt-8 flex min-h-0 flex-1 flex-col">
-              <AdminNav onNavigate={close} />
+              <AdminNav onNavigate={close} badges={badges} />
               <Account email={email} name={name} />
             </div>
           </div>

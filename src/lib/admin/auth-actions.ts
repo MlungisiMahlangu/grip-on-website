@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit, requestKey, retryMessage } from "@/lib/rate-limit";
 
 export type SignInState = {
   error?: string;
@@ -24,6 +25,11 @@ export async function signInAction(
 
   if (!email || !password) {
     return { error: "Enter your email and password." };
+  }
+
+  const limited = checkRateLimit(await requestKey("admin-login"), 10, 10 * 60_000);
+  if (!limited.ok) {
+    return { error: retryMessage(limited.retryAfterSeconds) };
   }
 
   const supabase = await createClient();

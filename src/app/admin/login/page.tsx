@@ -31,7 +31,10 @@ export default async function AdminLoginPage({
             <Wordmark className="h-7" priority />
             <span className="eyebrow border-l border-line pl-4 text-bone-dim">Admin</span>
           </div>
-          <Link href="/" className="eyebrow text-bone-dim transition-colors hover:text-bone">
+          <Link
+            href="/"
+            className="eyebrow inline-flex min-h-11 items-center text-bone-dim transition-colors hover:text-bone"
+          >
             View store
           </Link>
         </div>
@@ -46,14 +49,14 @@ export default async function AdminLoginPage({
           </div>
           <p className="eyebrow relative text-accent">Back office</p>
           <div className="relative">
-            <p className="display text-[clamp(4rem,7vw,7rem)]" aria-hidden="true">
+            <p className="display text-hero" aria-hidden="true">
               Run the
               <br />
               floor<span className="text-accent">.</span>
             </p>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-bone-dim">
-              Orders, stock and the full range in one place. Everything here is live — no staging,
-              no placeholders.
+              Orders, stock and the full range in one place. Everything here is live, with no
+              staging and no placeholders.
             </p>
           </div>
           <p className="eyebrow relative text-bone-dim">Grip On · Johannesburg</p>
@@ -62,7 +65,7 @@ export default async function AdminLoginPage({
         <section className="flex items-center justify-center px-5 py-14 sm:px-10">
           <div className="w-full max-w-sm">
             <p className="eyebrow text-accent">Admin access</p>
-            <h1 className="display mt-3 text-4xl sm:text-5xl">Sign in.</h1>
+            <h1 className="display mt-3 text-h2">Sign in.</h1>
             <p className="mt-3 text-sm leading-relaxed text-bone-dim">
               Use the admin account configured in Supabase. Customers cannot reach this area.
             </p>

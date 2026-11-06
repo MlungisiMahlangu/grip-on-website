@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { inviteAdminAction } from "@/lib/admin/user-actions";
 import type { FormState } from "@/lib/admin/schemas";
+import { toast } from "@/lib/toast";
 import { buttonClasses } from "@/components/ui/button";
 import { TextField } from "@/components/ui/form-field";
 
@@ -10,9 +11,21 @@ const initialState: FormState = {};
 
 export function InviteAdminForm() {
   const [state, formAction, pending] = useActionState(inviteAdminAction, initialState);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state.success) {
+      formRef.current?.reset();
+      toast.success(state.success);
+    }
+  }, [state.success]);
+
+  useEffect(() => {
+    if (state.error) toast.error(state.error);
+  }, [state.error]);
 
   return (
-    <form action={formAction} className="space-y-4 px-4 py-4 sm:px-5">
+    <form ref={formRef} action={formAction} className="space-y-4 px-4 py-4 sm:px-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <TextField
           label="Email"

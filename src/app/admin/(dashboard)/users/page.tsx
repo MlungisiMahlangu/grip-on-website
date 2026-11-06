@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, Search, ShieldCheck, UserRound } from "lucide-react";
+import { Search, ShieldCheck, UserRound } from "lucide-react";
 import { getAdminUsers } from "@/lib/admin/operations-queries";
 import { setUserRoleAction } from "@/lib/admin/user-actions";
 import { getAdminSession } from "@/lib/admin/auth";
@@ -17,6 +17,8 @@ import {
   Th,
 } from "@/components/admin/ui";
 import { InviteAdminForm } from "@/components/admin/invite-admin-form";
+import { FlashToast } from "@/components/admin/flash-toast";
+import { ConfirmSubmit } from "@/components/ui/confirm-dialog";
 import type { UserRole } from "@/lib/supabase/types";
 
 export const metadata: Metadata = { title: "Admin users" };
@@ -83,15 +85,7 @@ export default async function AdminUsersPage({
         description="Who can open this dashboard. Customers keep their accounts but never reach admin pages."
       />
 
-      {params.updated === "1" ? (
-        <p
-          role="status"
-          className="mb-5 flex items-center gap-2 rounded-[var(--radius-card)] border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300"
-        >
-          <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-          Role updated.
-        </p>
-      ) : null}
+      {params.updated === "1" ? <FlashToast message="Role updated." /> : null}
 
       {params.error === "self" ? (
         <p
@@ -223,12 +217,23 @@ export default async function AdminUsersPage({
                             <form action={setUserRoleAction}>
                               <input type="hidden" name="id" value={profile.id} />
                               <input type="hidden" name="role" value={nextRole} />
-                              <button
-                                type="submit"
-                                className={buttonClasses("secondary", "min-h-10")}
-                              >
-                                {nextRole === "admin" ? "Make admin" : "Make customer"}
-                              </button>
+                              {nextRole === "customer" ? (
+                                <ConfirmSubmit
+                                  title={`Remove admin access from ${profile.full_name || profile.email}?`}
+                                  description="They stay signed in as a customer. They will lose access to every admin page immediately."
+                                  confirmLabel="Make customer"
+                                  className={buttonClasses("secondary", "min-h-10")}
+                                >
+                                  Make customer
+                                </ConfirmSubmit>
+                              ) : (
+                                <button
+                                  type="submit"
+                                  className={buttonClasses("secondary", "min-h-10")}
+                                >
+                                  Make admin
+                                </button>
+                              )}
                             </form>
                           )}
                         </div>
@@ -278,12 +283,23 @@ export default async function AdminUsersPage({
                                   <form action={setUserRoleAction}>
                                     <input type="hidden" name="id" value={profile.id} />
                                     <input type="hidden" name="role" value={nextRole} />
-                                    <button
-                                      type="submit"
-                                      className={buttonClasses("secondary", "min-h-10")}
-                                    >
-                                      {nextRole === "admin" ? "Make admin" : "Make customer"}
-                                    </button>
+                                    {nextRole === "customer" ? (
+                                      <ConfirmSubmit
+                                        title={`Remove admin access from ${profile.full_name || profile.email}?`}
+                                        description="They stay signed in as a customer. They will lose access to every admin page immediately."
+                                        confirmLabel="Make customer"
+                                        className={buttonClasses("secondary", "min-h-10")}
+                                      >
+                                        Make customer
+                                      </ConfirmSubmit>
+                                    ) : (
+                                      <button
+                                        type="submit"
+                                        className={buttonClasses("secondary", "min-h-10")}
+                                      >
+                                        Make admin
+                                      </button>
+                                    )}
                                   </form>
                                 )}
                               </div>

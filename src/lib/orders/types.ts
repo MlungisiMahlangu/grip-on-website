@@ -1,4 +1,10 @@
-import type { GarmentSize, OrderStatus, PaymentMethod, PaymentStatus } from "@/lib/supabase/types";
+import type {
+  DeliveryArea,
+  GarmentSize,
+  OrderStatus,
+  PaymentMethod,
+  PaymentStatus,
+} from "@/lib/supabase/types";
 
 export type TrackedOrderItem = {
   product_name: string;
@@ -26,6 +32,8 @@ export type TrackedOrder = {
   discount_code: string | null;
   discount_cents: number;
   delivery_fee_cents: number;
+  delivery_area: DeliveryArea;
+  delivery_quote_required: boolean;
   total_cents: number;
   customer_first_name: string;
   city: string;

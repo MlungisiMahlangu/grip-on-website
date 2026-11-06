@@ -341,7 +341,7 @@ async function uploadFile(bucket, manifestPath) {
 }
 
 async function main() {
-  console.log("Grip On seed — starting");
+  console.log("Grip On seed: starting");
 
   const manifest = JSON.parse(
     fs.readFileSync(path.join(ASSETS, "manifest.json"), "utf8"),
@@ -492,6 +492,7 @@ async function main() {
               size,
               sku: skuFor(product.slug, colourSlug, size),
               stock_quantity: stockFor(product.slug, colourSlug, size),
+              is_available: stockFor(product.slug, colourSlug, size) > 0,
               is_active: true,
             },
             { onConflict: "colour_id,size" },
@@ -510,11 +511,13 @@ async function main() {
       {
         id: true,
         accent_hex: "#FF6A00",
-        announcement_text: "Free delivery on orders over R800",
-        free_delivery_threshold_cents: 80000,
-        delivery_fee_cents: 9900,
-        contact_email: "hello@griponwear.co.za",
-        instagram_url: "https://www.instagram.com/mlungisi_rs",
+        announcement_text: "Free delivery in Johannesburg",
+        announcement_enabled: true,
+        contact_email: "grip.on.za@gmail.com",
+        contact_phone: "0660488468",
+        instagram_url: "https://instagram.com/griponza",
+        business_address: "",
+        business_registration: "",
       },
       { onConflict: "id" },
     ),

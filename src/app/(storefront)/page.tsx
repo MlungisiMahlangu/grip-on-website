@@ -3,8 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Banknote, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import { SITE, VALUE_PROPS } from "@/lib/site";
-import { deliveryPricing, getStoreSettings } from "@/lib/orders/settings";
-import { formatPriceCents } from "@/lib/utils";
+import { getStoreSettings } from "@/lib/orders/settings";
 import { buttonClasses } from "@/components/ui/button";
 import { LifterMark } from "@/components/brand/lifter-mark";
 import { Marquee } from "@/components/layout/marquee";
@@ -20,7 +19,7 @@ const icons = [Truck, Banknote, ShieldCheck, RotateCcw];
 
 export default async function HomePage() {
   const settings = await getStoreSettings();
-  const { thresholdCents } = deliveryPricing(settings);
+  const freeDeliveryArea = settings?.free_delivery_area || SITE.freeDeliveryArea;
   const instagram = settings?.instagram_url ?? SITE.instagram;
 
   return (
@@ -42,7 +41,7 @@ export default async function HomePage() {
           <p className="eyebrow animate-fade text-accent" style={{ animationDelay: "80ms" }}>
             Student-founded · Johannesburg
           </p>
-          <h1 className="display mt-5 max-w-5xl text-[clamp(4rem,13vw,11rem)]">
+          <h1 className="display mt-5 max-w-5xl text-hero">
             <span className="block animate-rise" style={{ animationDelay: "140ms" }}>
               Built
             </span>
@@ -56,7 +55,7 @@ export default async function HomePage() {
 
           <div className="mt-8 flex flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
             <div className="animate-rise max-w-md" style={{ animationDelay: "380ms" }}>
-              <p className="text-sm leading-relaxed text-bone/80 sm:text-base">
+              <p className="text-body leading-relaxed text-bone/80">
                 Gym apparel for people who show up. Small runs, honest prices and gear that holds up
                 set after set.
               </p>
@@ -74,7 +73,7 @@ export default async function HomePage() {
               className="animate-fade font-mono text-[10px] uppercase leading-relaxed tracking-[0.18em] text-bone/70"
               style={{ animationDelay: "500ms" }}
             >
-              Free delivery over {formatPriceCents(thresholdCents)}
+              Free delivery in {freeDeliveryArea}
               <br />
               Cash on delivery
             </p>
@@ -91,11 +90,11 @@ export default async function HomePage() {
 
       <FeaturedProducts />
 
-      <section className="border-b border-line bg-ink py-16 sm:py-24 lg:py-32">
+      <section className="border-b border-line bg-ink section-y">
         <div className="container-x grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="eyebrow text-accent">The standard</p>
-            <h2 className="display mt-5 text-[clamp(2.75rem,7vw,6.5rem)]">
+            <h2 className="display mt-5 text-h2">
               We make gear
               <br />
               for the work.
@@ -104,7 +103,7 @@ export default async function HomePage() {
             </h2>
           </div>
           <div className="lg:col-span-4">
-            <p className="max-w-sm text-sm leading-relaxed text-bone-dim sm:text-base">
+            <p className="max-w-sm text-body leading-relaxed text-bone-dim">
               No staged gym selfies. No disposable fabric. Every piece is cut for training, finished
               in small runs and priced to be worn hard.
             </p>
@@ -112,7 +111,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="story" className="border-b border-line bg-ink py-16 sm:py-24">
+      <section id="story" className="border-b border-line bg-ink section-y">
         <div className="container-x grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] bg-ink-soft">
             <Image
@@ -131,10 +130,10 @@ export default async function HomePage() {
 
           <div>
             <p className="eyebrow text-accent">The lifter</p>
-            <h2 className="display mt-4 text-[clamp(2.5rem,5vw,4.5rem)]">
+            <h2 className="display mt-4 text-h2">
               The overhead press is the honest test.
             </h2>
-            <p className="mt-6 max-w-lg text-sm leading-relaxed text-bone-dim sm:text-base">
+            <p className="mt-6 max-w-lg text-body leading-relaxed text-bone-dim">
               No momentum. No shortcuts. Just you, the bar and the work. We put the lifter on the
               back of every piece because it is the standard we build to.
             </p>
@@ -145,14 +144,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="values" className="border-b border-line bg-light py-14 text-ink sm:py-20">
+      <section id="values" className="border-b border-line bg-light section-y text-ink">
         <div className="container-x">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="eyebrow text-ink/65">Why Grip On</p>
-              <h2 className="display mt-3 text-4xl sm:text-5xl">Built around the basics.</h2>
+              <h2 className="display mt-3 text-h2">Built around the basics.</h2>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-ink/60">
+            <p className="max-w-sm text-body leading-relaxed text-ink/60">
               The parts of ordering online that should be simple, kept simple.
             </p>
           </div>
@@ -165,10 +164,10 @@ export default async function HomePage() {
                   <div className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/15">
                     <Icon className="h-5 w-5" strokeWidth={1.6} />
                   </div>
-                  <h3 className="mt-6 font-sans text-sm font-semibold uppercase tracking-[0.08em]">
+                  <h3 className="mt-6 font-sans text-h3 font-semibold uppercase tracking-[0.08em]">
                     {item.title}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink/60">{item.body}</p>
+                  <p className="mt-2 text-body leading-relaxed text-ink/60">{item.body}</p>
                 </div>
               );
             })}
@@ -189,12 +188,12 @@ export default async function HomePage() {
           <div className="container-x relative flex min-h-[75svh] items-center py-20">
             <div className="max-w-2xl">
               <p className="eyebrow text-accent">The community</p>
-              <h2 className="display mt-5 text-[clamp(3rem,8vw,7rem)]">
+              <h2 className="display mt-5 text-h2">
                 The work is
                 <br />
                 better together<span className="text-accent">.</span>
               </h2>
-              <p className="mt-6 max-w-md text-sm leading-relaxed text-bone/75 sm:text-base">
+              <p className="mt-6 max-w-md text-body leading-relaxed text-bone/75">
                 Training partners, early mornings and the people who keep showing up. Follow what we
                 are building.
               </p>

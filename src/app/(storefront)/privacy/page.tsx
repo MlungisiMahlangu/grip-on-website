@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getStoreSettings } from "@/lib/orders/settings";
+import { BUSINESS } from "@/lib/business";
 import { SITE } from "@/lib/site";
 import { LegalPage, type LegalSection } from "@/components/layout/legal-page";
 
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default async function PrivacyPage() {
   const settings = await getStoreSettings();
   const contactEmail = settings?.contact_email || SITE.email;
+  const contactPhone = settings?.contact_phone || BUSINESS.phone.local;
 
   const sections: LegalSection[] = [
     {
@@ -26,10 +28,10 @@ export default async function PrivacyPage() {
           </p>
           <p>
             If you have a question about your information, email{" "}
-            <a href={`mailto:${contactEmail}`} className="text-bone underline underline-offset-2">
+            <a href={`mailto:${contactEmail}`} className="prose-link text-bone underline underline-offset-2">
               {contactEmail}
             </a>
-            .
+            . Our Information Officer monitors that address and handles information requests.
           </p>
         </>
       ),
@@ -70,6 +72,39 @@ export default async function PrivacyPage() {
             We do not sell, rent or trade your personal information, and we do not run advertising
             pixels on this site.
           </p>
+          <p>
+            Every marketing email includes a way to unsubscribe. You can also email us and ask to be
+            removed. Unsubscribing from marketing does not stop order and delivery messages.
+          </p>
+        </>
+      ),
+    },
+    {
+      heading: "Why we are allowed to use it",
+      body: (
+        <>
+          <p>
+            POPIA allows us to process personal information only for a lawful reason. We rely on the
+            following:
+          </p>
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>
+              <strong className="font-medium text-bone">Performing our contract:</strong> taking,
+              packing and delivering your order, and handling returns.
+            </li>
+            <li>
+              <strong className="font-medium text-bone">Legal obligations:</strong> keeping tax,
+              accounting and consumer records for the required periods.
+            </li>
+            <li>
+              <strong className="font-medium text-bone">Consent:</strong> sending marketing emails,
+              which you can withdraw at any time.
+            </li>
+            <li>
+              <strong className="font-medium text-bone">Legitimate interests:</strong> preventing
+              fraud, securing the site and answering customer queries.
+            </li>
+          </ul>
         </>
       ),
     },
@@ -87,8 +122,9 @@ export default async function PrivacyPage() {
             <li>Our courier partners receive the name, address and phone number needed to deliver.</li>
           </ul>
           <p>
-            These providers process information on our instructions. We may also disclose
-            information where the law requires it.
+            These providers process information on our instructions. Some may store or process data
+            outside South Africa; where they do, we rely on their contractual safeguards for
+            cross-border transfers. We may also disclose information where the law requires it.
           </p>
         </>
       ),
@@ -139,7 +175,7 @@ export default async function PrivacyPage() {
           </ul>
           <p>
             Email{" "}
-            <a href={`mailto:${contactEmail}`} className="text-bone underline underline-offset-2">
+            <a href={`mailto:${contactEmail}`} className="prose-link text-bone underline underline-offset-2">
               {contactEmail}
             </a>{" "}
             and we will respond within a reasonable time. We may need to verify your identity before
@@ -153,14 +189,14 @@ export default async function PrivacyPage() {
               href="https://inforeg.org.za"
               target="_blank"
               rel="noreferrer"
-              className="text-bone underline underline-offset-2"
+              className="prose-link text-bone underline underline-offset-2"
             >
               inforeg.org.za
             </a>{" "}
             or{" "}
             <a
               href="mailto:complaints.IR@justice.gov.za"
-              className="text-bone underline underline-offset-2"
+              className="prose-link text-bone underline underline-offset-2"
             >
               complaints.IR@justice.gov.za
             </a>
@@ -205,9 +241,13 @@ export default async function PrivacyPage() {
       intro="What we collect, why we need it, who can see it and how to exercise your rights under POPIA."
       updated="6 November 2026"
       contactEmail={contactEmail}
+      contactPhone={contactPhone}
+      businessAddress={settings?.business_address}
+      businessRegistration={settings?.business_registration}
       sections={sections}
       related={[
-        { label: "Terms of sale", href: "/terms" },
+        { label: "Terms of sale", href: "/terms-of-sale" },
+        { label: "Terms & conditions", href: "/terms" },
         { label: "Shipping & returns", href: "/shipping-returns" },
       ]}
     />

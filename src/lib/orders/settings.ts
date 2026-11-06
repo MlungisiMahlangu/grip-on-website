@@ -17,9 +17,9 @@ export const getStoreSettings = cache(async (): Promise<StoreSettings | null> =>
   return data;
 });
 
-export function deliveryPricing(settings: StoreSettings | null) {
+export function deliveryInfo(settings: StoreSettings | null) {
   return {
-    feeCents: settings?.delivery_fee_cents ?? SITE.deliveryFee * 100,
-    thresholdCents: settings?.free_delivery_threshold_cents ?? SITE.freeDeliveryThreshold * 100,
+    info: settings?.delivery_info_text || SITE.deliveryInfo,
+    freeArea: settings?.free_delivery_area || SITE.freeDeliveryArea,
   };
 }

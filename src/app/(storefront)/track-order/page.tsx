@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/catalogue/breadcrumbs";
+import { ContactActions } from "@/components/contact/contact-actions";
 import { TrackOrderForm } from "@/components/orders/track-order-form";
+import { getStoreSettings } from "@/lib/orders/settings";
+import { BUSINESS } from "@/lib/business";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Track order",
@@ -16,6 +20,10 @@ export default async function TrackOrderPage({
 }) {
   const params = await searchParams;
   const order = Array.isArray(params.order) ? params.order[0] : params.order;
+  const settings = await getStoreSettings();
+  const contactEmail = settings?.contact_email ?? SITE.email;
+  const contactPhone = settings?.contact_phone ?? BUSINESS.phone.local;
+  const instagram = settings?.instagram_url ?? SITE.instagram;
 
   return (
     <div className="bg-ink">
@@ -31,11 +39,11 @@ export default async function TrackOrderPage({
           <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="eyebrow text-accent">Where is it?</p>
-              <h1 className="display mt-3 text-[clamp(3.5rem,10vw,8rem)]">
+              <h1 className="display mt-3 text-hero">
                 Track it<span className="text-accent">.</span>
               </h1>
             </div>
-            <p className="max-w-sm text-sm leading-relaxed text-bone-dim">
+            <p className="max-w-sm text-body leading-relaxed text-bone-dim">
               Enter your order number and the email or phone number you used at checkout. No account
               needed.
             </p>
@@ -43,8 +51,23 @@ export default async function TrackOrderPage({
         </div>
       </section>
 
-      <div className="container-x py-8 sm:py-10">
+      <div className="container-x section-y">
         <TrackOrderForm defaultOrder={order} />
+
+        <section className="mt-8 max-w-2xl rounded-[var(--radius-card)] border border-line bg-ink-soft p-5">
+          <h2 className="eyebrow text-bone">Need help?</h2>
+          <p className="mt-2 text-body leading-relaxed text-bone-dim">
+            Call, WhatsApp or email us and we will look it up with you. Have your order number ready
+            if you have it.
+          </p>
+          <ContactActions
+            phone={contactPhone}
+            email={contactEmail}
+            instagram={instagram}
+            whatsappMessage="Hi Grip On, I need help tracking an order."
+            className="mt-4"
+          />
+        </section>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 
 const publicSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().url(),

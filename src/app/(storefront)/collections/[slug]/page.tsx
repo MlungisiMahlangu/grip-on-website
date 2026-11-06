@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCatalogue, getCollectionBySlug } from "@/lib/catalogue/queries";
+import { filterProducts } from "@/lib/catalogue/filter";
 import {
-  filterProducts,
-  getColourOptions,
-  getSizeOptions,
-} from "@/lib/catalogue/filter";
-import {
-  parseList,
-  parseSizes,
+  parseLimit,
   parseSort,
   type CatalogueSearchParams,
 } from "@/lib/catalogue/params";
@@ -16,6 +11,7 @@ import { Breadcrumbs } from "@/components/catalogue/breadcrumbs";
 import { CategoryNav } from "@/components/catalogue/category-nav";
 import { EmptyResults } from "@/components/catalogue/empty-results";
 import { FilterBar } from "@/components/catalogue/filter-bar";
+import { LoadMore } from "@/components/catalogue/load-more";
 import { ProductGrid } from "@/components/catalogue/product-grid";
 
 export const dynamic = "force-dynamic";
@@ -58,15 +54,15 @@ export default async function CollectionPage({
   const basePath = `/collections/${collection.slug}`;
   const results = filterProducts(products, {
     collection: collection.slug,
-    sizes: parseSizes(filters.sizes),
-    colours: parseList(filters.colours),
     sort: parseSort(filters.sort),
   });
+  const limit = parseLimit(filters.limit);
+  const visible = results.slice(0, limit);
 
   return (
     <div className="bg-ink">
       <section className="border-b border-line">
-        <div className="container-x pb-8 pt-8 sm:pt-12">
+        <div className="container-x pb-6 pt-7 sm:pt-9">
           <Breadcrumbs
             items={[
               { label: "Home", href: "/" },
@@ -75,39 +71,44 @@ export default async function CollectionPage({
             ]}
           />
 
-          <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="eyebrow text-accent">Collection</p>
-              <h1 className="display mt-3 text-[clamp(3.5rem,10vw,8rem)]">
+              <p className="eyebrow text-accent">
+                Collection / {collection.productCount}{" "}
+                {collection.productCount === 1 ? "piece" : "pieces"}
+              </p>
+              <h1 className="display mt-2 text-h2">
                 {collection.name}
                 <span className="text-accent">.</span>
               </h1>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-bone-dim">
+            <p className="max-w-md text-caption leading-relaxed text-bone-dim">
               {collection.description ?? "The latest from the Grip On range."}
             </p>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-5">
             <CategoryNav collections={collections} activeSlug={collection.slug} />
           </div>
         </div>
       </section>
 
-      <div className="container-x py-8 sm:py-10">
-        <FilterBar
-          basePath={basePath}
-          params={filters}
-          sizes={getSizeOptions(products)}
-          colours={getColourOptions(products)}
-          resultCount={results.length}
-        />
+      <div className="container-x pb-[var(--space-section)] pt-6">
+        <FilterBar basePath={basePath} params={filters} resultCount={results.length} />
 
-        <div className="mt-8 sm:mt-10">
-          {results.length > 0 ? (
-            <ProductGrid products={results} priorityCount={2} />
+        <div className="mt-6 sm:mt-8">
+          {visible.length > 0 ? (
+            <>
+              <ProductGrid products={visible} priorityCount={2} />
+              <LoadMore
+                basePath={basePath}
+                params={filters}
+                shown={visible.length}
+                total={results.length}
+              />
+            </>
           ) : (
-            <EmptyResults basePath={basePath} />
+            <EmptyResults href="/shop" label="Shop all" />
           )}
         </div>
       </div>

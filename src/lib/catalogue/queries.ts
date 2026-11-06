@@ -5,7 +5,6 @@ import { createPublicClient } from "@/lib/supabase/server";
 import { mediaUrl } from "@/lib/supabase/media";
 import type { Collection, Product, ProductColour, ProductVariant } from "@/lib/supabase/types";
 import {
-  LOW_STOCK_THRESHOLD,
   SIZE_ORDER,
   type Catalogue,
   type CatalogueCollection,
@@ -86,8 +85,9 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
           variantId: variant.id,
           sku: variant.sku,
           size: variant.size,
-          stock: variant.stock_quantity,
-          inStock: variant.stock_quantity > 0,
+          // Treat a missing column as available so the shop still works before the
+          // availability migration has been applied.
+          inStock: variant.is_available ?? true,
         }));
 
         const frontImage = mediaUrl(colour.front_image_path);
@@ -98,8 +98,6 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
           ...colour.gallery_paths,
         ]).map((path) => mediaUrl(path) as string);
 
-        const stock = sizes.reduce((total, size) => total + size.stock, 0);
-
         return {
           id: colour.id,
           slug: colour.slug,
@@ -109,8 +107,7 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
           frontImage,
           backImage,
           sizes,
-          stock,
-          inStock: stock > 0,
+          inStock: sizes.some((size) => size.inStock),
         };
       });
 
@@ -122,8 +119,6 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
       .filter((collection): collection is Collection => Boolean(collection))
       .sort((a, b) => a.sort_order - b.sort_order)
       .map((collection) => collection.slug);
-
-    const totalStock = productColours.reduce((total, colour) => total + colour.stock, 0);
 
     const sizes = unique(
       availableColours.flatMap((colour) =>
@@ -143,17 +138,16 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
       productType: product.product_type,
       isFeatured: product.is_featured,
       sortOrder: product.sort_order,
+      createdAt: product.created_at,
       updatedAt: product.updated_at,
       collectionSlugs,
       colours: productColours,
-      totalStock,
       sizes,
       images: {
         front: defaultColour?.frontImage ?? null,
         back: defaultColour?.backImage ?? null,
       },
       defaultColourId: defaultColour?.id ?? null,
-      isLowStock: totalStock > 0 && totalStock <= LOW_STOCK_THRESHOLD,
     };
   });
 

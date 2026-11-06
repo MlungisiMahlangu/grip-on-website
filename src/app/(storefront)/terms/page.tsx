@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getStoreSettings } from "@/lib/orders/settings";
+import { BUSINESS } from "@/lib/business";
 import { SITE } from "@/lib/site";
 import { LegalPage, type LegalSection } from "@/components/layout/legal-page";
 
 export const metadata: Metadata = {
-  title: "Terms of sale",
+  title: "Terms & conditions",
   description:
-    "The terms that apply when you shop with Grip On: orders, cash on delivery, delivery, returns and your consumer rights in South Africa.",
+    "The terms for using the Grip On website: acceptable use, product information, pricing, intellectual property and your rights under South African law.",
   alternates: { canonical: "/terms" },
 };
 
 export default async function TermsPage() {
   const settings = await getStoreSettings();
   const contactEmail = settings?.contact_email || SITE.email;
+  const contactPhone = settings?.contact_phone || BUSINESS.phone.local;
 
   const sections: LegalSection[] = [
     {
@@ -21,95 +23,16 @@ export default async function TermsPage() {
       body: (
         <>
           <p>
-            This store is run by Grip On, a South African gym-apparel label based in Johannesburg.
-            These terms apply when you browse the site or place an order.
-          </p>
-          <p>
-            By using the site or confirming an order, you agree to these terms. If you do not agree,
-            please do not order.
-          </p>
-        </>
-      ),
-    },
-    {
-      heading: "Orders and confirmation",
-      body: (
-        <>
-          <p>
-            An order you submit is an offer to buy. We confirm it by email once the stock and
-            delivery details check out. Until then, no sale is complete.
-          </p>
-          <p>
-            We may decline or cancel an order if a piece sells out, a price was listed incorrectly,
-            the order looks fraudulent, or the delivery address cannot be reached. If you have
-            already paid us, we will refund the full amount.
-          </p>
-        </>
-      ),
-    },
-    {
-      heading: "Prices and payment",
-      body: (
-        <>
-          <p>
-            All prices are in South African rand. The subtotal, delivery fee, any discount and the
-            final total are shown before you place your order.
-          </p>
-          <p>
-            Cash on delivery is currently the only payment method. You pay the courier when the
-            parcel arrives. We do not collect or store card details. Card and instant EFT are
-            marked as unavailable on the checkout page until we add them.
-          </p>
-        </>
-      ),
-    },
-    {
-      heading: "Delivery",
-      body: (
-        <>
-          <p>
-            We deliver across South Africa by courier. Give us a street address where someone aged
-            18 or older can receive and pay for the parcel. If the address or phone number is wrong,
-            delivery may fail or be delayed.
-          </p>
-          <p>
-            Delivery estimates are estimates, not guarantees. Couriers can be delayed by weather,
-            load-shedding, public holidays or events outside our control. See{" "}
-            <Link href="/shipping-returns" className="text-bone underline underline-offset-2">
-              Shipping &amp; returns
+            This site is run by Grip On, a South African gym-apparel label based in Johannesburg.
+            These terms cover your use of the website. They are separate from the{" "}
+            <Link href="/terms-of-sale" className="prose-link text-bone underline underline-offset-2">
+              Terms of Sale
             </Link>{" "}
-            for the current fee and timing.
-          </p>
-        </>
-      ),
-    },
-    {
-      heading: "Returns and refunds",
-      body: (
-        <>
-          <p>
-            Our returns process is set out in{" "}
-            <Link href="/shipping-returns" className="text-bone underline underline-offset-2">
-              Shipping &amp; returns
-            </Link>
-            . That process sits alongside your rights under the Consumer Protection Act, 2008 and
-            the Electronic Communications and Transactions Act, 2002. Nothing in these terms
-            reduces those rights.
-          </p>
-        </>
-      ),
-    },
-    {
-      heading: "Product information",
-      body: (
-        <>
-          <p>
-            We describe fabrics, fits and features as accurately as we can. Colours can look
-            different from screen to screen, and minor variation between production runs is normal.
+            that apply when you place an order.
           </p>
           <p>
-            Stock counts on the site are live, but a piece can sell out between adding it to your
-            bag and placing the order. We will contact you before cancelling if that happens.
+            By browsing the site, you agree to these terms. If you do not agree, please stop using
+            the site.
           </p>
         </>
       ),
@@ -118,15 +41,86 @@ export default async function TermsPage() {
       heading: "Using the site",
       body: (
         <>
-          <p>You agree not to:</p>
+          <p>
+            You may browse, search and share our pages for personal, non-commercial use. You agree
+            not to:
+          </p>
           <ul className="list-disc space-y-1.5 pl-5">
             <li>Place fraudulent orders or use someone else&apos;s details without permission.</li>
             <li>Scrape, overload, probe or interfere with the site or its security.</li>
+            <li>Attempt to access admin areas or accounts that are not yours.</li>
             <li>Use the site to break the law or infringe someone else&apos;s rights.</li>
+            <li>Upload or send malicious code, spam or abusive content.</li>
           </ul>
           <p>
-            We may suspend access or cancel orders where we reasonably believe the site is being
-            misused.
+            We may suspend or block access where we reasonably believe the site is being misused.
+          </p>
+        </>
+      ),
+    },
+    {
+      heading: "Orders and the Terms of Sale",
+      body: (
+        <p>
+          Orders, payment, delivery, returns and refunds are governed by our{" "}
+          <Link href="/terms-of-sale" className="prose-link text-bone underline underline-offset-2">
+            Terms of Sale
+          </Link>
+          . If anything on this page conflicts with those terms about an order, the Terms of Sale
+          apply to that order.
+        </p>
+      ),
+    },
+    {
+      heading: "Product information and images",
+      body: (
+        <>
+          <p>
+            We describe fabrics, fits and features as accurately as we can. Colours can look
+            different from screen to screen, and small differences between production runs are
+            normal for clothing made in short runs.
+          </p>
+          <p>
+            Product images are for illustration. A piece may be shown with styling, lighting or
+            accessories that are not included. Check the product page for what is included and the
+            sizes available.
+          </p>
+        </>
+      ),
+    },
+    {
+      heading: "Prices and currency",
+      body: (
+        <>
+          <p>
+            All prices are shown in South African rand and include VAT where it applies. The price
+            you see on a product page is the price used at checkout, subject to the delivery terms
+            explained there.
+          </p>
+          <p>
+            We try to keep prices and stock accurate. If a price is listed incorrectly, we may
+            cancel the affected order and refund you in full, or contact you before proceeding. We
+            will not charge you more than the price you agreed to without your consent.
+          </p>
+        </>
+      ),
+    },
+    {
+      heading: "Accounts and access",
+      body: (
+        <>
+          <p>
+            You do not need an account to shop. Admin access is limited to authorised Grip On staff
+            and is protected by authentication. You may not share admin credentials or use another
+            person&apos;s access.
+          </p>
+          <p>
+            If you believe someone has accessed your account or our admin area without permission,
+            email us immediately at{" "}
+            <a href={`mailto:${contactEmail}`} className="prose-link text-bone underline underline-offset-2">
+              {contactEmail}
+            </a>
+            .
           </p>
         </>
       ),
@@ -140,6 +134,32 @@ export default async function TermsPage() {
           You may not reuse our brand assets or photography commercially without our written
           permission.
         </p>
+      ),
+    },
+    {
+      heading: "Third-party links and services",
+      body: (
+        <p>
+          The site links to services we do not control, such as Instagram and WhatsApp. Their terms
+          and privacy policies apply when you use them. We are not responsible for content or
+          availability on those services.
+        </p>
+      ),
+    },
+    {
+      heading: "Availability of the site",
+      body: (
+        <>
+          <p>
+            We aim to keep the site online and accurate, but we do not guarantee uninterrupted
+            access. Maintenance, updates, load-shedding, network problems or events outside our
+            control can take parts of the site offline.
+          </p>
+          <p>
+            We may change, pause or remove parts of the site, including products and collections,
+            without notice. We will not remove a paid order because of a site change.
+          </p>
+        </>
       ),
     },
     {
@@ -160,12 +180,34 @@ export default async function TermsPage() {
       ),
     },
     {
+      heading: "Privacy",
+      body: (
+        <p>
+          How we collect and use personal information is set out in our{" "}
+          <Link href="/privacy" className="prose-link text-bone underline underline-offset-2">
+            Privacy Policy
+          </Link>
+          . It forms part of these terms.
+        </p>
+      ),
+    },
+    {
+      heading: "Changes to these terms",
+      body: (
+        <p>
+          We may update these terms when the site, our services or the law change. The date at the
+          bottom of this page shows the latest version. Continued use of the site after an update
+          means you accept the updated terms.
+        </p>
+      ),
+    },
+    {
       heading: "Governing law and disputes",
       body: (
         <>
           <p>
             South African law governs these terms. If something goes wrong, email us first at{" "}
-            <a href={`mailto:${contactEmail}`} className="text-bone underline underline-offset-2">
+            <a href={`mailto:${contactEmail}`} className="prose-link text-bone underline underline-offset-2">
               {contactEmail}
             </a>{" "}
             and give us a chance to resolve it.
@@ -178,27 +220,21 @@ export default async function TermsPage() {
         </>
       ),
     },
-    {
-      heading: "Changes to these terms",
-      body: (
-        <p>
-          We may update these terms when our services or the law change. The date at the bottom of
-          this page shows the latest version. An order is governed by the terms in force when it was
-          placed.
-        </p>
-      ),
-    },
   ];
 
   return (
     <LegalPage
       eyebrow="Terms"
-      title="Terms of sale"
-      intro="The short version: honest pricing, cash on delivery, real stock and your South African consumer rights intact."
+      title="Terms & conditions"
+      intro="The rules for using this site: honest product information, fair use, our intellectual property and your South African consumer rights."
       updated="6 November 2026"
       contactEmail={contactEmail}
+      contactPhone={contactPhone}
+      businessAddress={settings?.business_address}
+      businessRegistration={settings?.business_registration}
       sections={sections}
       related={[
+        { label: "Terms of sale", href: "/terms-of-sale" },
         { label: "Privacy policy", href: "/privacy" },
         { label: "Shipping & returns", href: "/shipping-returns" },
       ]}

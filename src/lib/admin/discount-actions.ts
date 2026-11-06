@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { assertAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import { fromSastInputValue } from "@/lib/admin/dates";

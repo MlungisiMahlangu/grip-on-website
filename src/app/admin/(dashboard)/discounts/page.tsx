@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, Pause, Pencil, Play, Plus, Search } from "lucide-react";
+import { Pause, Pencil, Play, Plus, Search } from "lucide-react";
 import { getAdminDiscounts } from "@/lib/admin/operations-queries";
 import { toggleDiscountActiveAction } from "@/lib/admin/discount-actions";
+import { FEATURES } from "@/lib/features";
 import { formatOrderDate } from "@/lib/orders/format";
 import { formatPriceCents, cn } from "@/lib/utils";
 import { buttonClasses } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
   DiscountStatusBadge,
   discountValueLabel,
 } from "@/components/admin/discount-status";
+import { FlashToast } from "@/components/admin/flash-toast";
 
 export const metadata: Metadata = { title: "Discounts" };
 
@@ -47,6 +49,34 @@ export default async function AdminDiscountsPage({
   searchParams: SearchParams;
 }) {
   const params = await searchParams;
+
+  if (!FEATURES.discounts) {
+    return (
+      <>
+        <AdminPageHeader
+          eyebrow="Marketing"
+          title="Discounts."
+          description="Discount codes are paused on the storefront and in checkout while we finish testing them."
+        />
+        <AdminPanel title="Coming soon">
+          <div className="px-4 py-8 sm:px-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-accent">
+              Paused, not removed
+            </p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-bone-dim">
+              Codes, minimum spends, start and end dates, and redemption limits are built and will
+              return once checkout has finished testing. Customers cannot enter a code right now.
+            </p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-bone-dim">
+              To enable discounts, set <span className="font-mono text-bone">discounts: true</span>{" "}
+              in <span className="font-mono text-bone">src/lib/features.ts</span> and redeploy.
+            </p>
+          </div>
+        </AdminPanel>
+      </>
+    );
+  }
+
   const page = Math.max(1, Number(params.page) || 1);
   const data = await getAdminDiscounts({ query: params.q, page });
 
@@ -64,15 +94,7 @@ export default async function AdminDiscountsPage({
         }
       />
 
-      {params.saved === "1" ? (
-        <p
-          role="status"
-          className="mb-5 flex items-center gap-2 rounded-[var(--radius-card)] border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300"
-        >
-          <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-          Discount saved.
-        </p>
-      ) : null}
+      {params.saved === "1" ? <FlashToast message="Discount saved." /> : null}
 
       <form method="get" className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="relative flex-1">

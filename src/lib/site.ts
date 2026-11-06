@@ -1,15 +1,19 @@
+import { BUSINESS } from "@/lib/business";
+
 export const SITE = {
-  name: "Grip On",
+  name: BUSINESS.name,
   tagline: "Grip on the work.",
   description:
     "Gym apparel built for the work. Student-founded in Johannesburg, made in small runs and delivered across South Africa.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://griponwear.co.za",
-  email: "hello@griponwear.co.za",
-  location: "Johannesburg, South Africa",
-  instagram: "https://www.instagram.com/mlungisi_rs",
-  announcement: "Free delivery on orders over R800",
-  deliveryFee: 99,
-  freeDeliveryThreshold: 800,
+  email: BUSINESS.email,
+  phone: BUSINESS.phone,
+  location: BUSINESS.location,
+  instagram: BUSINESS.instagram.url,
+  announcement: "Free delivery in Johannesburg",
+  freeDeliveryArea: "Johannesburg",
+  deliveryInfo:
+    "Free delivery in Johannesburg. Outside Johannesburg, we contact you to confirm the courier cost and options before dispatch.",
 } as const;
 
 export const COLLECTIONS = [
@@ -72,6 +76,7 @@ export const FOOTER_NAV = [
     title: "Help",
     links: [
       { label: "Track order", href: "/track-order" },
+      { label: "FAQ", href: "/faq" },
       { label: "Contact", href: "/contact" },
     ],
   },
@@ -83,8 +88,9 @@ export const FOOTER_NAV = [
     title: "Legal",
     links: [
       { label: "Shipping & returns", href: "/shipping-returns" },
+      { label: "Terms of sale", href: "/terms-of-sale" },
+      { label: "Terms & conditions", href: "/terms" },
       { label: "Privacy", href: "/privacy" },
-      { label: "Terms", href: "/terms" },
     ],
   },
 ] as const;

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { saveCollectionAction } from "@/lib/admin/collection-actions";
 import { slugify, type FormState } from "@/lib/admin/schemas";
 import type { Collection } from "@/lib/supabase/types";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { buttonClasses } from "@/components/ui/button";
 import { TextAreaField, TextField } from "@/components/ui/form-field";
 import { SingleImageField } from "@/components/admin/image-uploader";
@@ -17,9 +18,17 @@ export function CollectionForm({ collection }: { collection?: Collection }) {
   const [slug, setSlug] = useState(collection?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(Boolean(collection));
   const [active, setActive] = useState(collection?.is_active ?? true);
+  const [dirty, setDirty] = useState(false);
+
+  useUnsavedChanges(dirty);
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form
+      action={formAction}
+      onChange={() => setDirty(true)}
+      onSubmit={() => setDirty(false)}
+      className="space-y-6"
+    >
       {collection ? <input type="hidden" name="id" value={collection.id} /> : null}
 
       {state.error ? (
@@ -108,6 +117,7 @@ export function CollectionForm({ collection }: { collection?: Collection }) {
             folder={`collections/${slug || "collection"}`}
             defaultValue={collection?.image_path ?? ""}
             hint="Optional. Falls back to the first product image."
+            onDirty={() => setDirty(true)}
           />
         </div>
       </div>
@@ -119,6 +129,7 @@ export function CollectionForm({ collection }: { collection?: Collection }) {
         <Link href="/admin/collections" className={buttonClasses("secondary")}>
           Cancel
         </Link>
+        {dirty ? <p className="self-center text-xs text-accent">Unsaved changes</p> : null}
       </div>
     </form>
   );

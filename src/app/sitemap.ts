@@ -14,8 +14,10 @@ const STATIC_ROUTES: Array<{
   { path: "/about", changeFrequency: "monthly", priority: 0.6 },
   { path: "/contact", changeFrequency: "monthly", priority: 0.6 },
   { path: "/track-order", changeFrequency: "monthly", priority: 0.4 },
+  { path: "/faq", changeFrequency: "monthly", priority: 0.5 },
   { path: "/shipping-returns", changeFrequency: "monthly", priority: 0.4 },
   { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
+  { path: "/terms-of-sale", changeFrequency: "yearly", priority: 0.3 },
   { path: "/terms", changeFrequency: "yearly", priority: 0.3 },
 ];
 

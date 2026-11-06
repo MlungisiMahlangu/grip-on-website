@@ -62,7 +62,7 @@ export async function GET() {
 
         for (const size of colour.sizes) {
           const sizeLabel = SIZE_LABELS[size.size];
-          const title = clean(`${product.name} — ${colour.name} / ${sizeLabel}`, 150);
+          const title = clean(`${product.name} · ${colour.name} / ${sizeLabel}`, 150);
 
           items.push(
             [
@@ -108,7 +108,7 @@ export async function GET() {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">',
     "  <channel>",
-    `    <title>${xml(`${SITE.name} — Product feed`)}</title>`,
+    `    <title>${xml(`${SITE.name} · Product feed`)}</title>`,
     `    <link>${xml(SITE.url)}</link>`,
     `    <description>${xml(SITE.description)}</description>`,
     ...items,

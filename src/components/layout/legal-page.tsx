@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, MessageCircle, Phone } from "lucide-react";
+import { phoneFromLocal } from "@/lib/business";
 import { Breadcrumbs } from "@/components/catalogue/breadcrumbs";
 
 export type LegalSection = {
@@ -14,6 +15,9 @@ type LegalPageProps = {
   intro: string;
   updated: string;
   contactEmail: string;
+  contactPhone: string;
+  businessAddress?: string | null;
+  businessRegistration?: string | null;
   sections: LegalSection[];
   related: Array<{ label: string; href: string }>;
 };
@@ -31,9 +35,14 @@ export function LegalPage({
   intro,
   updated,
   contactEmail,
+  contactPhone,
+  businessAddress,
+  businessRegistration,
   sections,
   related,
 }: LegalPageProps) {
+  const phone = phoneFromLocal(contactPhone);
+
   return (
     <div className="bg-ink">
       <section className="border-b border-line">
@@ -43,27 +52,29 @@ export function LegalPage({
           <div className="mt-5 grid gap-5 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-8">
               <p className="eyebrow text-accent">{eyebrow}</p>
-              <h1 className="display mt-3 text-[clamp(3rem,9vw,6.5rem)]">
+              <h1 className="display mt-3 text-hero">
                 {title}
                 <span className="text-accent">.</span>
               </h1>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-bone-dim lg:col-span-4">{intro}</p>
+            <p className="max-w-md text-body leading-relaxed text-bone-dim lg:col-span-4">
+              {intro}
+            </p>
           </div>
         </div>
       </section>
 
-      <div className="container-x grid gap-10 py-9 sm:py-12 lg:grid-cols-12 lg:gap-12">
+      <div className="container-x grid gap-10 section-y lg:grid-cols-12 lg:gap-12">
         <article className="space-y-8 lg:col-span-8">
           {sections.map((section) => (
             <section key={section.heading} aria-labelledby={headingId(section.heading)}>
-              <h2
+              <h3
                 id={headingId(section.heading)}
-                className="font-sans text-base font-semibold uppercase tracking-[0.08em] text-bone"
+                className="font-sans text-h3 font-semibold uppercase tracking-[0.08em] text-bone"
               >
                 {section.heading}
-              </h2>
-              <div className="mt-3 space-y-3 text-sm leading-relaxed text-bone-dim sm:text-base">
+              </h3>
+              <div className="mt-3 space-y-3 text-body leading-relaxed text-bone-dim">
                 {section.body}
               </div>
             </section>
@@ -79,17 +90,36 @@ export function LegalPage({
             <h2 id="legal-help" className="eyebrow text-bone">
               Need help?
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-bone-dim">
-              Questions about an order, your information or these terms? Email us and we will
-              answer.
+            <p className="mt-3 text-body leading-relaxed text-bone-dim">
+              Questions about an order, your information or these terms? Call, WhatsApp or email us
+              and we will answer.
             </p>
-            <a
-              href={`mailto:${contactEmail}`}
-              className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm text-bone transition-colors hover:text-accent"
-            >
-              {contactEmail}
-              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-            </a>
+            <div className="mt-2 grid">
+              <a
+                href={phone.tel}
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm text-bone transition-colors hover:text-accent"
+              >
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                {phone.display}
+              </a>
+              <a
+                href={phone.whatsapp("Hi Grip On, I have a question about your policies.")}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm text-bone transition-colors hover:text-accent"
+              >
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                WhatsApp
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+              <a
+                href={`mailto:${contactEmail}`}
+                className="inline-flex min-h-11 items-center gap-1.5 text-sm text-bone transition-colors hover:text-accent"
+              >
+                {contactEmail}
+                <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </div>
 
             <div className="mt-5 border-t border-line pt-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-bone-dim">
@@ -100,7 +130,7 @@ export function LegalPage({
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="inline-flex min-h-11 items-center text-sm text-bone/80 transition-colors hover:text-accent"
+                      className="inline-flex min-h-11 min-w-11 items-center text-sm text-bone/80 transition-colors hover:text-accent"
                     >
                       {link.label}
                     </Link>
@@ -108,6 +138,22 @@ export function LegalPage({
                 ))}
               </ul>
             </div>
+
+            {businessAddress?.trim() || businessRegistration?.trim() ? (
+              <div className="mt-5 border-t border-line pt-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-bone-dim">
+                  Business details
+                </p>
+                <address className="mt-2 space-y-1 text-sm not-italic leading-relaxed text-bone/80">
+                  {businessAddress?.trim() ? (
+                    <span className="block whitespace-pre-line">{businessAddress}</span>
+                  ) : null}
+                  {businessRegistration?.trim() ? (
+                    <span className="block">{businessRegistration}</span>
+                  ) : null}
+                </address>
+              </div>
+            ) : null}
           </div>
         </aside>
       </div>

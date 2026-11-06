@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createClient } from "@supabase/supabase-js";
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import type { Database } from "./types";
 
 const adminSchema = z.object({

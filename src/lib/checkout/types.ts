@@ -7,6 +7,6 @@ export type CheckoutVariant = {
   colourName: string;
   size: GarmentSize;
   priceCents: number;
-  stock: number;
+  available: boolean;
   imageUrl: string | null;
 };

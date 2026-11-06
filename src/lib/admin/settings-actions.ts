@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { assertAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import { settingsInputSchema, type FormState } from "@/lib/admin/schemas";
@@ -31,13 +31,15 @@ export async function saveSettingsAction(
 
   const parsed = settingsInputSchema.safeParse({
     announcementText: text(formData, "announcementText"),
-    accentHex: text(formData, "accentHex"),
-    thresholdCents: text(formData, "freeDeliveryThreshold"),
-    feeCents: text(formData, "deliveryFee"),
+    announcementEnabled: formData.get("announcementEnabled") === "on",
+    deliveryInfoText: text(formData, "deliveryInfoText"),
+    freeDeliveryArea: text(formData, "freeDeliveryArea"),
     contactEmail: text(formData, "contactEmail"),
+    contactPhone: text(formData, "contactPhone"),
     instagramUrl: text(formData, "instagramUrl"),
     maintenanceMode: formData.get("maintenanceMode") === "on",
-    maintenanceMessage: text(formData, "maintenanceMessage"),
+    businessAddress: text(formData, "businessAddress"),
+    businessRegistration: text(formData, "businessRegistration"),
     whatsappNumber: text(formData, "whatsappNumber"),
   });
 
@@ -52,13 +54,15 @@ export async function saveSettingsAction(
     .from("settings")
     .update({
       announcement_text: data.announcementText,
-      accent_hex: data.accentHex,
-      free_delivery_threshold_cents: data.thresholdCents,
-      delivery_fee_cents: data.feeCents,
+      announcement_enabled: data.announcementEnabled,
+      delivery_info_text: data.deliveryInfoText,
+      free_delivery_area: data.freeDeliveryArea,
       contact_email: data.contactEmail,
+      contact_phone: data.contactPhone,
       instagram_url: data.instagramUrl || null,
       maintenance_mode: data.maintenanceMode,
-      maintenance_message: data.maintenanceMessage,
+      business_address: data.businessAddress,
+      business_registration: data.businessRegistration,
     })
     .eq("id", true);
 

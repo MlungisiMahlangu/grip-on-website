@@ -2,6 +2,7 @@ import "server-only";
 
 import { Resend } from "resend";
 import { SITE } from "@/lib/site";
+import { BUSINESS, phoneFromLocal } from "@/lib/business";
 import type { ContactMessageInput } from "@/lib/contact/schema";
 
 function escapeHtml(value: string) {
@@ -26,11 +27,12 @@ export async function sendContactEmail(input: ContactMessageInput) {
     return;
   }
 
+  const phone = phoneFromLocal(BUSINESS.phone.local);
+
   const body = `
     <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#0a0a0a;">
       <strong>${escapeHtml(input.name)}</strong> sent a message through the contact form.
-    </p>
-    <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#5e5e57;">Subject</p>
+    </p>    <p style="margin:0 0 4px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#5e5e57;">Subject</p>
     <p style="margin:0 0 16px;font-size:16px;color:#0a0a0a;">${escapeHtml(input.subject)}</p>
     <p style="margin:0 0 16px;font-size:14px;line-height:1.7;color:#0a0a0a;white-space:pre-wrap;">${escapeHtml(input.message)}</p>
     <p style="margin:0;font-size:13px;line-height:1.6;color:#5e5e57;">
@@ -60,7 +62,7 @@ export async function sendContactEmail(input: ContactMessageInput) {
             <tr>
               <td style="padding:18px 28px;background:#f4f3ef;font-size:11px;line-height:1.6;color:#5e5e57;">
                 Reply directly to this email to answer ${escapeHtml(input.name)}.<br />
-                ${SITE.name} · ${SITE.location}
+                ${SITE.name} · ${SITE.location} · ${phone.display}
               </td>
             </tr>
           </table>

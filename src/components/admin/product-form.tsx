@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { saveProductAction } from "@/lib/admin/product-actions";
 import {
   PRODUCT_TYPES,
@@ -10,6 +10,8 @@ import {
   type FormState,
 } from "@/lib/admin/schemas";
 import type { Collection, Product } from "@/lib/supabase/types";
+import { toast } from "@/lib/toast";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { buttonClasses } from "@/components/ui/button";
 import { SelectField, TextAreaField, TextField } from "@/components/ui/form-field";
 import { AdminPanel } from "@/components/admin/ui";
@@ -63,20 +65,23 @@ export function ProductForm({
   saved?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(saveProductAction, initialState);
+  const [dirty, setDirty] = useState(false);
+
+  useUnsavedChanges(dirty);
+
+  useEffect(() => {
+    if (!saved) return;
+    toast.success("Product saved.");
+  }, [saved]);
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form
+      action={formAction}
+      onChange={() => setDirty(true)}
+      onSubmit={() => setDirty(false)}
+      className="space-y-6"
+    >
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
-
-      {saved ? (
-        <p
-          role="status"
-          className="flex items-center gap-2 rounded-[var(--radius-card)] border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-300"
-        >
-          <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-          Product saved.
-        </p>
-      ) : null}
 
       {state.error ? (
         <p
@@ -230,6 +235,7 @@ export function ProductForm({
           <Link href="/admin/products" className={buttonClasses("secondary")}>
             {product ? "Back to products" : "Cancel"}
           </Link>
+          {dirty ? <p className="self-center text-xs text-accent">Unsaved changes</p> : null}
         </div>
         {product ? (
           <Link

@@ -1,20 +1,24 @@
 import Link from "next/link";
-import { ArrowUpRight, Mail, MapPin } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { FOOTER_NAV, SITE } from "@/lib/site";
-import { formatPriceCents } from "@/lib/utils";
+import { phoneFromLocal } from "@/lib/business";
 import { LifterMark } from "@/components/brand/lifter-mark";
 import { Wordmark } from "@/components/brand/wordmark";
 import { InstagramIcon } from "@/components/ui/instagram-icon";
 
 export function SiteFooter({
   email,
+  phone,
   instagram,
-  freeDeliveryThresholdCents,
+  freeDeliveryArea,
 }: {
   email: string;
+  phone: string;
   instagram: string | null;
-  freeDeliveryThresholdCents: number;
+  freeDeliveryArea: string;
 }) {
+  const links = phoneFromLocal(phone);
+
   return (
     <footer className="border-t border-line bg-ink">
       <div className="container-x py-14 lg:py-20">
@@ -24,7 +28,7 @@ export function SiteFooter({
               <LifterMark className="h-12" />
               <Wordmark className="h-7" />
             </div>
-            <p className="mt-6 max-w-sm text-sm leading-relaxed text-bone-dim">
+            <p className="mt-6 max-w-sm text-body leading-relaxed text-bone-dim">
               Gym apparel built for the work. Student-founded in Johannesburg, made in small runs
               and delivered across South Africa.
             </p>
@@ -70,7 +74,7 @@ export function SiteFooter({
             Cash on delivery
           </span>
           <span className="rounded-full border border-line px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-bone-dim">
-            Free delivery over {formatPriceCents(freeDeliveryThresholdCents)}
+            Free delivery in {freeDeliveryArea}
           </span>
           <span className="rounded-full border border-line px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.16em] text-bone-dim">
             Delivered nationwide
@@ -84,6 +88,22 @@ export function SiteFooter({
               <MapPin className="h-3.5 w-3.5" strokeWidth={1.7} />
               {SITE.location}
             </span>
+            <a
+              href={links.tel}
+              className="inline-flex min-h-11 items-center gap-1.5 transition-colors hover:text-bone"
+            >
+              <Phone className="h-3.5 w-3.5" strokeWidth={1.7} />
+              {links.display}
+            </a>
+            <a
+              href={links.whatsapp("Hi Grip On, I have a question about an order.")}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center gap-1.5 transition-colors hover:text-bone"
+            >
+              <MessageCircle className="h-3.5 w-3.5" strokeWidth={1.7} />
+              WhatsApp
+            </a>
             <a
               href={`mailto:${email}`}
               className="inline-flex min-h-11 items-center gap-1.5 transition-colors hover:text-bone"

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import { z } from "@/lib/zod-config";
 import { assertAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -35,7 +35,6 @@ function revalidateStorefront() {
   revalidatePath("/collections/[slug]", "page");
   revalidatePath("/admin");
   revalidatePath("/admin/products");
-  revalidatePath("/admin/inventory");
 }
 
 async function requireAdminOrError() {
@@ -294,24 +293,24 @@ export async function saveColourAction(
   const skuBase = `GO-${product.slug.toUpperCase()}-${data.slug.toUpperCase()}`;
 
   for (const size of sizes) {
-    const stockValue = text(formData, `stock_${size}`);
-    const stock = Math.max(0, Math.min(100000, Number.parseInt(stockValue || "0", 10) || 0));
+    const isAvailable = formData.get(`available_${size}`) === "on";
     const sizeCode = size === "ONE_SIZE" ? "OS" : size;
     const existingId = existingBySize.get(size);
 
     if (existingId) {
       const { error } = await supabase
         .from("product_variants")
-        .update({ stock_quantity: stock })
+        .update({ is_available: isAvailable })
         .eq("id", existingId);
-      if (error) return { error: `Stock not saved: ${error.message}` };
+      if (error) return { error: `Availability not saved: ${error.message}` };
     } else {
       const { error } = await supabase.from("product_variants").insert({
         product_id: product.id,
         colour_id: colourId,
         size,
         sku: `${skuBase}-${sizeCode}`,
-        stock_quantity: stock,
+        stock_quantity: 0,
+        is_available: isAvailable,
       });
       if (error) return { error: `Variant not created: ${error.message}` };
     }
@@ -346,4 +345,55 @@ export async function setColourActiveAction(formData: FormData) {
 
   revalidateStorefront();
   revalidatePath(`/admin/products/${parsed.data.productId}`);
+}
+
+const availabilitySchema = z.object({
+  productId: z.uuid(),
+  value: z.boolean(),
+  variantId: z.uuid().optional(),
+  colourId: z.uuid().optional(),
+});
+
+export async function setAvailabilityAction(formData: FormData) {
+  await assertAdmin();
+
+  const parsed = availabilitySchema.safeParse({
+    productId: text(formData, "productId"),
+    value: formData.get("value") === "true",
+    variantId: text(formData, "variantId") || undefined,
+    colourId: text(formData, "colourId") || undefined,
+  });
+
+  if (!parsed.success) throw new Error("Invalid availability update.");
+
+  const { productId, value, variantId, colourId } = parsed.data;
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("product_variants")
+    .update({ is_available: value })
+    .eq("product_id", productId);
+
+  if (variantId) query = query.eq("id", variantId);
+  if (colourId) query = query.eq("colour_id", colourId);
+
+  const { error } = await query;
+  if (error) throw new Error(error.message);
+
+  revalidateStorefront();
+  revalidatePath(`/admin/products/${productId}`);
+}
+
+export async function deleteProductAction(formData: FormData) {
+  await assertAdmin();
+
+  const parsed = z.uuid().safeParse(text(formData, "id"));
+  if (!parsed.success) throw new Error("Invalid product.");
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("products").delete().eq("id", parsed.data);
+  if (error) throw new Error(error.message);
+
+  revalidateStorefront();
+  redirect("/admin/products?deleted=1");
 }

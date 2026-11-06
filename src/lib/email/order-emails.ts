@@ -2,10 +2,11 @@ import "server-only";
 
 import { Resend } from "resend";
 import { SITE } from "@/lib/site";
+import { BUSINESS, phoneFromLocal } from "@/lib/business";
 import { formatPriceCents } from "@/lib/utils";
 import type { TrackedOrder } from "@/lib/orders/types";
 import type { OrderStatus } from "@/lib/supabase/types";
-import type { CheckoutInput } from "@/lib/checkout/schema";
+import type { CheckoutDetails } from "@/lib/checkout/schema";
 
 function escapeHtml(value: string) {
   return value.replace(
@@ -23,6 +24,19 @@ function escapeHtml(value: string) {
 
 function sizeLabel(size: string) {
   return size === "ONE_SIZE" ? "One size" : size;
+}
+
+function deliveryLabel(order: TrackedOrder) {
+  if (order.delivery_quote_required) {
+    return order.delivery_fee_cents > 0
+      ? formatPriceCents(order.delivery_fee_cents)
+      : "To be confirmed";
+  }
+  return order.delivery_fee_cents === 0 ? "Free" : formatPriceCents(order.delivery_fee_cents);
+}
+
+function deliveryAreaLabel(order: TrackedOrder) {
+  return order.delivery_area === "johannesburg" ? "Johannesburg" : "Outside Johannesburg";
 }
 
 function itemsTable(order: TrackedOrder) {
@@ -45,6 +59,8 @@ function itemsTable(order: TrackedOrder) {
 }
 
 function shell(title: string, body: string) {
+  const phone = phoneFromLocal(BUSINESS.phone.local);
+
   return `<!doctype html>
 <html lang="en-ZA">
   <body style="margin:0;padding:0;background:#f4f3ef;font-family:Arial,Helvetica,sans-serif;">
@@ -67,7 +83,9 @@ function shell(title: string, body: string) {
             <tr>
               <td style="padding:18px 28px;background:#f4f3ef;font-size:11px;line-height:1.6;color:#5e5e57;">
                 Grip On · ${SITE.location}<br />
-                Questions? Reply to this email or write to ${SITE.email}.
+                Call or WhatsApp <a href="${phone.tel}" style="color:#0a0a0a;">${phone.display}</a>
+                · <a href="mailto:${SITE.email}" style="color:#0a0a0a;">${SITE.email}</a><br />
+                Questions? Reply to this email and a person will answer.
               </td>
             </tr>
           </table>
@@ -79,6 +97,7 @@ function shell(title: string, body: string) {
 }
 
 function customerEmail(order: TrackedOrder) {
+  const phone = phoneFromLocal(BUSINESS.phone.local);
   const body = `
     <p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:#0a0a0a;">
       Thanks ${escapeHtml(order.customer_first_name)}. We have your order and we are getting it ready.
@@ -91,26 +110,37 @@ function customerEmail(order: TrackedOrder) {
         <td style="padding:10px 0 0;font-size:13px;color:#5e5e57;">Subtotal</td>
         <td align="right" style="padding:10px 0 0;font-size:13px;color:#0a0a0a;">${formatPriceCents(order.subtotal_cents)}</td>
       </tr>
+      <tr>
+        <td style="padding:4px 0 0;font-size:13px;color:#5e5e57;">Delivery</td>
+        <td align="right" style="padding:4px 0 0;font-size:13px;color:#0a0a0a;">${deliveryLabel(order)}</td>
+      </tr>
       ${
-        order.discount_cents > 0
+        order.delivery_quote_required && order.delivery_fee_cents === 0
           ? `<tr>
-        <td style="padding:4px 0 0;font-size:13px;color:#5e5e57;">Discount${order.discount_code ? ` · ${escapeHtml(order.discount_code)}` : ""}</td>
-        <td align="right" style="padding:4px 0 0;font-size:13px;color:#0a0a0a;">−${formatPriceCents(order.discount_cents)}</td>
+        <td colspan="2" style="padding:6px 0 0;font-size:12px;line-height:1.6;color:#5e5e57;">
+          Delivery is quoted separately. We will contact you to confirm the courier cost and options before dispatch.
+        </td>
       </tr>`
           : ""
       }
-      <tr>
-        <td style="padding:4px 0 0;font-size:13px;color:#5e5e57;">Delivery</td>
-        <td align="right" style="padding:4px 0 0;font-size:13px;color:#0a0a0a;">${order.delivery_fee_cents === 0 ? "Free" : formatPriceCents(order.delivery_fee_cents)}</td>
-      </tr>
       <tr>
         <td style="padding:10px 0 0;font-size:15px;font-weight:700;color:#0a0a0a;">Total</td>
         <td align="right" style="padding:10px 0 0;font-size:15px;font-weight:700;color:#0a0a0a;">${formatPriceCents(order.total_cents)}</td>
       </tr>
     </table>
     <p style="margin:22px 0 0;padding:14px 16px;background:#fff4ec;border-left:3px solid #ff6a00;font-size:13px;line-height:1.6;color:#0a0a0a;">
-      <strong>Cash on delivery.</strong> Have ${formatPriceCents(order.total_cents)} ready for the courier.
+      <strong>Cash on delivery.</strong>
+      ${
+        order.delivery_quote_required && order.delivery_fee_cents === 0
+          ? `Have ${formatPriceCents(order.total_cents)} ready for your order. We will contact you to confirm the courier cost before dispatch.`
+          : `Have ${formatPriceCents(order.total_cents)} ready for the courier.`
+      }
       We deliver to ${escapeHtml(order.city)}, ${escapeHtml(order.province)}.
+    </p>
+    <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:#5e5e57;">
+      Need help? Call or WhatsApp us on
+      <a href="${phone.tel}" style="color:#0a0a0a;">${phone.display}</a>
+      or reply to this email.
     </p>
     <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:#5e5e57;">
       You can follow your order at
@@ -121,7 +151,7 @@ function customerEmail(order: TrackedOrder) {
   return shell("Order confirmed.", body);
 }
 
-function ownerEmail(order: TrackedOrder, customer: CheckoutInput) {
+function ownerEmail(order: TrackedOrder, customer: CheckoutDetails) {
   const address = [
     customer.addressLine1,
     customer.addressLine2,
@@ -140,8 +170,10 @@ function ownerEmail(order: TrackedOrder, customer: CheckoutInput) {
       <strong>${formatPriceCents(order.total_cents)}</strong>.
     </p>
     ${
-      order.discount_cents > 0
-        ? `<p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#5e5e57;">Discount applied: <strong>${escapeHtml(order.discount_code ?? "code")}</strong> (−${formatPriceCents(order.discount_cents)}).</p>`
+      order.delivery_quote_required && order.delivery_fee_cents === 0
+        ? `<p style="margin:0 0 18px;padding:14px 16px;background:#fff4ec;border-left:3px solid #ff6a00;font-size:14px;line-height:1.6;color:#0a0a0a;">
+      <strong>Quote delivery before dispatch.</strong> This order is outside Johannesburg. Contact the customer to agree the courier cost, then record the fee in the admin dashboard.
+    </p>`
         : ""
     }
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
@@ -151,7 +183,9 @@ function ownerEmail(order: TrackedOrder, customer: CheckoutInput) {
     <p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#0a0a0a;">
       ${escapeHtml(order.customer_first_name)} ${escapeHtml(customer.lastName)}<br />
       ${escapeHtml(customer.phone)} · ${escapeHtml(customer.email)}<br />
-      ${address}
+      ${address}<br />
+      <span style="color:#5e5e57;">Delivery area:</span> ${deliveryAreaLabel(order)}
+      · <span style="color:#5e5e57;">Delivery:</span> ${deliveryLabel(order)}
     </p>
     ${
       customer.deliveryNotes
@@ -165,7 +199,7 @@ function ownerEmail(order: TrackedOrder, customer: CheckoutInput) {
   return shell(`New order ${order.order_number}`, body);
 }
 
-export async function sendOrderEmails(order: TrackedOrder, customer: CheckoutInput) {
+export async function sendOrderEmails(order: TrackedOrder, customer: CheckoutDetails) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.info(`[email] RESEND_API_KEY not set; skipping emails for ${order.order_number}.`);
@@ -179,7 +213,7 @@ export async function sendOrderEmails(order: TrackedOrder, customer: CheckoutInp
   const messages = [
     {
       to: customer.email,
-      subject: `Order ${order.order_number} confirmed — Grip On`,
+      subject: `Order ${order.order_number} confirmed · Grip On`,
       html: customerEmail(order),
     },
   ];
@@ -240,6 +274,8 @@ export async function sendOrderStatusEmail(
     return;
   }
 
+  const phone = phoneFromLocal(BUSINESS.phone.local);
+
   const body = `
     <p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:#0a0a0a;">
       ${copy.intro}
@@ -253,6 +289,8 @@ export async function sendOrderStatusEmail(
     }
     <p style="margin:0;font-size:13px;line-height:1.6;color:#5e5e57;">
       Total ${formatPriceCents(order.total_cents)} · Delivering to ${escapeHtml(order.city)}, ${escapeHtml(order.province)}.<br />
+      Need help? Call or WhatsApp us on
+      <a href="${phone.tel}" style="color:#0a0a0a;">${phone.display}</a>.<br />
       Follow it any time at
       <a href="${SITE.url}/track-order" style="color:#0a0a0a;">${SITE.url}/track-order</a>.
     </p>`;
@@ -261,7 +299,7 @@ export async function sendOrderStatusEmail(
     const { error } = await new Resend(apiKey).emails.send({
       from: process.env.RESEND_FROM_EMAIL || "Grip On <onboarding@resend.dev>",
       to: customerEmail,
-      subject: `Order ${order.order_number} ${copy.subject} — Grip On`,
+      subject: `Order ${order.order_number} ${copy.subject} · Grip On`,
       html: shell(`Order ${copy.subject}.`, body),
     });
     if (error) console.error(`[email] status ${status}: ${error.message}`);

@@ -27,6 +27,14 @@ export function StatusBadge({ status }: { status: OrderStatus }) {
   );
 }
 
+export function DeliveryQuoteBadge() {
+  return (
+    <span className="inline-flex items-center rounded-full border border-accent/40 bg-accent/10 px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-accent">
+      Quote delivery
+    </span>
+  );
+}
+
 export function AdminPageHeader({
   eyebrow,
   title,
@@ -42,7 +50,7 @@ export function AdminPageHeader({
     <div className="mb-7 flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="eyebrow text-accent">{eyebrow}</p>
-        <h1 className="display mt-2 text-4xl sm:text-5xl">{title}</h1>
+        <h1 className="display mt-2 text-h2">{title}</h1>
         {description ? (
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-bone-dim">{description}</p>
         ) : null}
