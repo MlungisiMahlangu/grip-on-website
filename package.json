@@ -1,23 +1,42 @@
 {
   "name": "grip-on",
-  "private": true,
   "version": "1.0.0",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "dev": "concurrently -n client,server -c blue,green \"npm run dev:client\" \"npm run dev:server\"",
-    "dev:client": "npm run dev --workspace=client",
-    "dev:server": "npm run dev --workspace=server",
-    "build": "npm run build --workspace=client",
-    "start": "npm run start --workspace=server",
-    "lint": "eslint . --ext .js,.jsx",
-    "deploy": "npm run build && gh-pages -d client/dist"
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "db:seed": "node --env-file=.env.local scripts/seed.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
-  "workspaces": [
-    "client",
-    "server"
-  ],
+  "dependencies": {
+    "@hookform/resolvers": "^7.0.3",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.119.0",
+    "clsx": "2.1.1",
+    "lucide-react": "1.69.0",
+    "motion": "14.9.1",
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-hook-form": "^7.91.0",
+    "resend": "^6.37.0",
+    "tailwind-merge": "3.7.0",
+    "zod": "4.6.7",
+    "zustand": "5.0.16"
+  },
   "devDependencies": {
-    "concurrently": "^9.1.0",
-    "gh-pages": "^6.3.0"
+    "@tailwindcss/postcss": "4.3.4",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "16.4.5",
+    "prettier": "^3.6.0",
+    "tailwindcss": "4.3.4",
+    "typescript": "^5.9.0"
   }
 }

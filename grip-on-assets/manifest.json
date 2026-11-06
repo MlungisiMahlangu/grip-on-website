@@ -1,0 +1,236 @@
+{
+ "note": "Placeholder AI-generated images. Replace via admin when real photos arrive.",
+ "colours": {
+  "black": {
+   "garment_hex": "#111111",
+   "graphic_hex": "#FFFFFF"
+  },
+  "white": {
+   "garment_hex": "#F4F4F4",
+   "graphic_hex": "#111111"
+  },
+  "bone": {
+   "garment_hex": "#E8DFCB",
+   "graphic_hex": "#111111"
+  },
+  "sand": {
+   "garment_hex": "#CDBE9F",
+   "graphic_hex": "#111111"
+  },
+  "charcoal": {
+   "garment_hex": "#3B3B3B",
+   "graphic_hex": "#FFFFFF"
+  },
+  "navy": {
+   "garment_hex": "#1B2442",
+   "graphic_hex": "#FFFFFF"
+  },
+  "burgundy": {
+   "garment_hex": "#5A1220",
+   "graphic_hex": "#FFFFFF"
+  },
+  "olive": {
+   "garment_hex": "#4A5230",
+   "graphic_hex": "#EFE9D8"
+  }
+ },
+ "products": {
+  "classic-tee": {
+   "black": [
+    "assets/products/classic-tee/black/classic-tee-black-back.webp",
+    "assets/products/classic-tee/black/classic-tee-black-front.webp"
+   ],
+   "white": [
+    "assets/products/classic-tee/white/classic-tee-white-back.webp",
+    "assets/products/classic-tee/white/classic-tee-white-front.webp"
+   ],
+   "bone": [
+    "assets/products/classic-tee/bone/classic-tee-bone-back.webp",
+    "assets/products/classic-tee/bone/classic-tee-bone-front.webp"
+   ],
+   "sand": [
+    "assets/products/classic-tee/sand/classic-tee-sand-back.webp",
+    "assets/products/classic-tee/sand/classic-tee-sand-front.webp"
+   ],
+   "charcoal": [
+    "assets/products/classic-tee/charcoal/classic-tee-charcoal-back.webp",
+    "assets/products/classic-tee/charcoal/classic-tee-charcoal-front.webp"
+   ],
+   "navy": [
+    "assets/products/classic-tee/navy/classic-tee-navy-back.webp",
+    "assets/products/classic-tee/navy/classic-tee-navy-front.webp"
+   ],
+   "burgundy": [
+    "assets/products/classic-tee/burgundy/classic-tee-burgundy-back.webp",
+    "assets/products/classic-tee/burgundy/classic-tee-burgundy-front.webp"
+   ],
+   "olive": [
+    "assets/products/classic-tee/olive/classic-tee-olive-back.webp",
+    "assets/products/classic-tee/olive/classic-tee-olive-front.webp"
+   ]
+  },
+  "heavyweight-hoodie": {
+   "black": [
+    "assets/products/heavyweight-hoodie/black/heavyweight-hoodie-black-back.webp",
+    "assets/products/heavyweight-hoodie/black/heavyweight-hoodie-black-front.webp"
+   ],
+   "charcoal": [
+    "assets/products/heavyweight-hoodie/charcoal/heavyweight-hoodie-charcoal-back.webp",
+    "assets/products/heavyweight-hoodie/charcoal/heavyweight-hoodie-charcoal-front.webp"
+   ],
+   "navy": [
+    "assets/products/heavyweight-hoodie/navy/heavyweight-hoodie-navy-back.webp",
+    "assets/products/heavyweight-hoodie/navy/heavyweight-hoodie-navy-front.webp"
+   ],
+   "burgundy": [
+    "assets/products/heavyweight-hoodie/burgundy/heavyweight-hoodie-burgundy-back.webp",
+    "assets/products/heavyweight-hoodie/burgundy/heavyweight-hoodie-burgundy-front.webp"
+   ],
+   "olive": [
+    "assets/products/heavyweight-hoodie/olive/heavyweight-hoodie-olive-back.webp",
+    "assets/products/heavyweight-hoodie/olive/heavyweight-hoodie-olive-front.webp"
+   ],
+   "bone": [
+    "assets/products/heavyweight-hoodie/bone/heavyweight-hoodie-bone-back.webp",
+    "assets/products/heavyweight-hoodie/bone/heavyweight-hoodie-bone-front.webp"
+   ],
+   "sand": [
+    "assets/products/heavyweight-hoodie/sand/heavyweight-hoodie-sand-back.webp",
+    "assets/products/heavyweight-hoodie/sand/heavyweight-hoodie-sand-front.webp"
+   ]
+  },
+  "stringer-tank": {
+   "black": [
+    "assets/products/stringer-tank/black/stringer-tank-black-back.webp",
+    "assets/products/stringer-tank/black/stringer-tank-black-front.webp"
+   ],
+   "charcoal": [
+    "assets/products/stringer-tank/charcoal/stringer-tank-charcoal-back.webp",
+    "assets/products/stringer-tank/charcoal/stringer-tank-charcoal-front.webp"
+   ],
+   "navy": [
+    "assets/products/stringer-tank/navy/stringer-tank-navy-back.webp",
+    "assets/products/stringer-tank/navy/stringer-tank-navy-front.webp"
+   ],
+   "burgundy": [
+    "assets/products/stringer-tank/burgundy/stringer-tank-burgundy-back.webp",
+    "assets/products/stringer-tank/burgundy/stringer-tank-burgundy-front.webp"
+   ],
+   "olive": [
+    "assets/products/stringer-tank/olive/stringer-tank-olive-back.webp",
+    "assets/products/stringer-tank/olive/stringer-tank-olive-front.webp"
+   ],
+   "bone": [
+    "assets/products/stringer-tank/bone/stringer-tank-bone-back.webp",
+    "assets/products/stringer-tank/bone/stringer-tank-bone-front.webp"
+   ],
+   "sand": [
+    "assets/products/stringer-tank/sand/stringer-tank-sand-back.webp",
+    "assets/products/stringer-tank/sand/stringer-tank-sand-front.webp"
+   ]
+  },
+  "training-shorts": {
+   "black": [
+    "assets/products/training-shorts/black/training-shorts-black-front.webp"
+   ],
+   "charcoal": [
+    "assets/products/training-shorts/charcoal/training-shorts-charcoal-front.webp"
+   ],
+   "olive": [
+    "assets/products/training-shorts/olive/training-shorts-olive-front.webp"
+   ]
+  },
+  "gym-cap": {
+   "black": [
+    "assets/products/gym-cap/black/gym-cap-black-front.webp"
+   ],
+   "olive": [
+    "assets/products/gym-cap/olive/gym-cap-olive-front.webp"
+   ]
+  },
+  "gym-towel": {
+   "black": [
+    "assets/products/gym-towel/black/gym-towel-black-front.webp"
+   ],
+   "olive": [
+    "assets/products/gym-towel/olive/gym-towel-olive-front.webp"
+   ]
+  },
+  "gym-duffel": {
+   "black": [
+    "assets/products/gym-duffel/black/gym-duffel-black-front.webp"
+   ],
+   "olive": [
+    "assets/products/gym-duffel/olive/gym-duffel-olive-front.webp"
+   ]
+  },
+  "shaker-bottle": {
+   "black": [
+    "assets/products/shaker-bottle/black/shaker-bottle-black-front.webp"
+   ]
+  },
+  "lifting-straps": {
+   "black": [
+    "assets/products/lifting-straps/black/lifting-straps-black-01.webp",
+    "assets/products/lifting-straps/black/lifting-straps-black-02.webp"
+   ]
+  }
+ },
+ "lifestyle": {
+  "lifestyle-hoodie-portrait": {
+   "path": "assets/lifestyle/lifestyle-hoodie-portrait.webp",
+   "width": 1024,
+   "height": 1536
+  },
+  "lifestyle-back-corridor": {
+   "path": "assets/lifestyle/lifestyle-back-corridor.webp",
+   "width": 1536,
+   "height": 1024
+  },
+  "lifestyle-chalk-hands": {
+   "path": "assets/lifestyle/lifestyle-chalk-hands.webp",
+   "width": 1536,
+   "height": 1024
+  },
+  "lifestyle-tee-portrait": {
+   "path": "assets/lifestyle/lifestyle-tee-portrait.webp",
+   "width": 1024,
+   "height": 1536
+  },
+  "lifestyle-cap-closeup": {
+   "path": "assets/lifestyle/lifestyle-cap-closeup.webp",
+   "width": 1024,
+   "height": 1536
+  },
+  "lifestyle-shorts-gym": {
+   "path": "assets/lifestyle/lifestyle-shorts-gym.webp",
+   "width": 1024,
+   "height": 1536
+  },
+  "lifestyle-community": {
+   "path": "assets/lifestyle/lifestyle-community.webp",
+   "width": 1536,
+   "height": 1024
+  },
+  "lifestyle-founders": {
+   "path": "assets/lifestyle/lifestyle-founders.webp",
+   "width": 1536,
+   "height": 1024
+  },
+  "lifestyle-overhead-press": {
+   "path": "assets/lifestyle/lifestyle-overhead-press.webp",
+   "width": 1536,
+   "height": 1024
+  },
+  "lifestyle-cap-portrait": {
+   "path": "assets/lifestyle/lifestyle-cap-portrait.webp",
+   "width": 1024,
+   "height": 1536
+  },
+  "lifestyle-deadlift-woman": {
+   "path": "assets/lifestyle/lifestyle-deadlift-woman.webp",
+   "width": 1536,
+   "height": 1024
+  }
+ }
+}

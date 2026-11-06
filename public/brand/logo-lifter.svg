@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Grip On lifter mark">
+  <mask id="lifter" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+    <rect width="120" height="120" fill="#000"/>
+    <g fill="#fff" stroke="none">
+      <rect x="6" y="21.5" width="108" height="4.5" rx="2.25"/>
+      <rect x="2.5" y="10" width="7" height="26" rx="2"/>
+      <rect x="11.5" y="13" width="5" height="20" rx="1.5"/>
+      <rect x="18" y="18" width="3.5" height="10" rx="1"/>
+      <rect x="110.5" y="10" width="7" height="26" rx="2"/>
+      <rect x="103.5" y="13" width="5" height="20" rx="1.5"/>
+      <rect x="98.5" y="18" width="3.5" height="10" rx="1"/>
+      <circle cx="44" cy="57.5" r="8.5"/>
+      <circle cx="76" cy="57.5" r="8.5"/>
+      <path d="M39.5 56C44.5 52.5 51.5 51 60 51C68.5 51 75.5 52.5 80.5 56L86.5 67C88.3 72.5 86.6 78.5 83.8 84.5L78 110H42L36.2 84.5C33.4 78.5 31.7 72.5 33.5 67Z"/>
+      <rect x="56.5" y="50.5" width="7" height="7"/>
+      <ellipse cx="60" cy="47" rx="6.2" ry="7.3"/>
+      <circle cx="40.5" cy="24" r="4"/>
+      <circle cx="79.5" cy="24" r="4"/>
+    </g>
+    <g fill="none" stroke="#fff" stroke-linecap="round">
+      <path d="M46 57L36.5 41" stroke-width="9"/>
+      <path d="M74 57L83.5 41" stroke-width="9"/>
+      <path d="M36.5 41L41 26" stroke-width="8"/>
+      <path d="M83.5 41L79 26" stroke-width="8"/>
+    </g>
+    <g fill="none" stroke="#000" stroke-linecap="round">
+      <path d="M60 61V76" stroke-width="2.2"/>
+      <path d="M49.5 71C54.5 68.5 65.5 68.5 70.5 71" stroke-width="2.2"/>
+      <path d="M60 79V107" stroke-width="2"/>
+      <path d="M51 86H69" stroke-width="2"/>
+      <path d="M51 93.5H69" stroke-width="2"/>
+      <path d="M52 101H68" stroke-width="2"/>
+    </g>
+  </mask>
+  <rect width="120" height="120" fill="#F5F5F2" mask="url(#lifter)"/>
+</svg>
