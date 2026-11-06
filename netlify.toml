@@ -2,4 +2,4 @@
   # OWNER_EMAIL is the store's notification address and matches a public contact
   # email committed in the database migrations. It is not a credential, so exclude
   # only this key from secrets scanning; every other key stays scanned.
-  SECRETS_SCAN_OMIT_KEYS = ["OWNER_EMAIL"]
+  environment = { SECRETS_SCAN_OMIT_KEYS = "OWNER_EMAIL" }
