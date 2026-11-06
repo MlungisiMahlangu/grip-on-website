@@ -210,8 +210,11 @@ Apply these in filename order in the Supabase SQL Editor if they have not alread
 2. `supabase/migrations/20261106150000_round2_delivery.sql`
 3. `supabase/migrations/20261106160000_round2_forms.sql`
 4. `supabase/migrations/20261106170000_round2_admin.sql`
+5. `supabase/migrations/20261106180000_round2_repair.sql`
 
-The last one adds `product_variants.is_available`, `orders.admin_viewed_at`, the announcement and business-detail settings, removes stock effects from `create_order`, tightens subscriber RLS and adds contact messages to Realtime. It is idempotent. Until it runs, those columns do not exist, so admin saves that touch them fail and size availability renders as unavailable.
+Migration 4 adds `product_variants.is_available`, `orders.admin_viewed_at`, the announcement and business-detail settings, removes stock effects from `create_order`, tightens subscriber RLS and adds contact messages to Realtime. It is idempotent. Until it runs, those columns do not exist, so admin saves that touch them fail and size availability renders as unavailable.
+
+Migration 4 depends on 2 and 3: it re-creates `create_order` against `idempotency_key`, `delivery_area` and `delivery_quote_required`, which those migrations add. Running 4 alone leaves checkout failing with a missing-column error. The repair file at step 5 is idempotent, adds anything steps 2 and 3 missed, and restores the current `create_order` and `track_order` functions, so run it if any of steps 1 to 4 was skipped.
 
 ### Round 2 hardening and QA
 
