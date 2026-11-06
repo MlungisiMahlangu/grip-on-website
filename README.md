@@ -22,7 +22,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The dev server runs on **http://localhost:3000**, matching the Supabase Auth Site URL for local development.
+The dev server runs on **localhost:3000**, matching the Supabase Auth Site URL for local development.
 
 | Script | Purpose |
 |---|---|
@@ -70,7 +70,7 @@ The migration was validated locally against Postgres with 33 checks covering che
 3. **Seed the catalogue** — `npm run db:seed`. This creates the storage bucket if the SQL was not run, uploads all product and lifestyle images under `products/` and `lifestyle/`, and writes the catalogue.
 4. **Check the result** — the seed prints collection, product, colour, variant and image counts, and tells you which admin was promoted.
 
-Local auth URLs in Supabase should stay at `http://localhost:3000` while developing. Add the production domain to **Site URL** and **Redirect URLs** before launch.
+Local auth URLs in Supabase should stay on `localhost:3000` while developing. Add the production domain to **Site URL** and **Redirect URLs** before launch.
 
 ## What is built (Phase 3)
 
@@ -139,7 +139,7 @@ Without a key, orders are still created and confirmations still render; only the
    ```
 
    A trigger creates the profile row on sign-up. Do not store the password in the repo or in chat; rotate it if it has ever been shared.
-3. **URL configuration** — Site URL `http://localhost:3000` for development, and add `http://localhost:3000/**` to Redirect URLs. Add the production domain when deploying.
+3. **URL configuration** — Site URL `localhost:3000` for development, and add `localhost:3000/**` to Redirect URLs. Add the production domain when deploying.
 4. Sign in at `/admin/login`. Customers cannot reach the area.
 
 ## What is built (Phase 6)
@@ -165,7 +165,7 @@ Without a key, orders are still created and confirmations still render; only the
 ### Phase 6 setup
 
 1. **Apply the operations migration** — in the Supabase dashboard open **SQL Editor**, paste `supabase/migrations/20261106130000_phase6_operations.sql`, and run it. If Phase 5's realtime migration has not run yet, apply `20261106120000_phase5_realtime.sql` too.
-2. **Redirect URLs** — keep `http://localhost:3000/**` (and the production domain) in **Authentication → URL Configuration**. The admin invite email redirects to `/accept-invite`.
+2. **Redirect URLs** — keep `localhost:3000/**` (and the production domain) in **Authentication → URL Configuration**. The admin invite email redirects to `/accept-invite`.
 3. **Admin invites and roles** — `SUPABASE_SERVICE_ROLE_KEY` must be set server-side for `inviteUserByEmail` and profile role updates. It never reaches the browser. Without it, invites and role changes return a configuration error.
 4. **Contact notifications** — reuse `RESEND_API_KEY`, `RESEND_FROM_EMAIL` and `OWNER_EMAIL` from Phase 4. Without them, messages still save to the admin inbox; only the owner email is skipped.
 5. **Verification** — typecheck, lint and production build pass. The hosted database was exercised end to end after the migration: discount create → checkout apply → order with server-priced discount and redemption → admin order detail; contact form → admin inbox → read/archive; checkout and contact subscribe → admin list and CSV export; settings save → announcement, accent and maintenance gate → revert; invite link → password set → admin sign-in and promote/demote. Test orders, stock, codes, subscribers, messages and temporary admins were removed afterwards.
@@ -183,7 +183,7 @@ Without a key, orders are still created and confirmations still render; only the
 
 ### Phase 7 setup
 
-1. **Production URL** — set `NEXT_PUBLIC_SITE_URL` to the live origin (for example `https://griponwear.co.za` once the domain is bought). Sitemap, robots, canonical URLs and the feed all derive from it. Until then, local development can keep `http://localhost:3000`.
+1. **Production URL** — set `NEXT_PUBLIC_SITE_URL` to the live origin (for example `https://your-domain.example`). Sitemap, robots, canonical URLs and the feed all derive from it. Until then, local development can keep `localhost:3000`.
 2. **Keep-alive** — set `KEEP_ALIVE_TOKEN` in the hosting environment. In GitHub, add the repository variable `SITE_URL` (the deployed origin) and the secret `KEEP_ALIVE_TOKEN` with the same value. Run the workflow manually once to confirm it returns `{"ok":true}`. Leave the token unset only if you are comfortable with a public read-only health check.
 3. **Search engines** — submit `${NEXT_PUBLIC_SITE_URL}/sitemap.xml` in Google Search Console and Bing Webmaster Tools after the domain resolves.
 4. **Google Merchant Center** — add the store, then submit `${NEXT_PUBLIC_SITE_URL}/google-merchant.xml` as a scheduled feed (daily is enough; the route refreshes hourly). Shipping and return settings belong in Merchant Center and should match `/shipping-returns`.

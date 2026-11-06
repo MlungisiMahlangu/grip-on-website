@@ -1,4 +1,4 @@
-const BASE = (process.env.CHECK_LINKS_BASE ?? "http://localhost:3000").replace(/\/$/, "");
+const BASE = (process.env.CHECK_LINKS_BASE ?? "http://127.0.0.1:3000").replace(/\/$/, "");
 const SKIP_PREFIXES = ["/admin", "/api", "/order/", "/_next"];
 const SKIP_FILES = /\.(?:png|jpe?g|webp|avif|svg|ico|css|js|mjs|xml|txt|json|woff2?)$/i;
 const MAX_PAGES = Number(process.env.CHECK_LINKS_MAX ?? 250);
@@ -43,7 +43,14 @@ async function main() {
   }
 
   const seeds = [...sitemap.body.matchAll(/<loc>([^<]+)<\/loc>/g)]
-    .map((match) => internalUrl(match[1], BASE))
+    .map((match) => {
+      // Sitemap entries use the configured public origin, which may differ from
+      // the host used to reach the local server.
+      const entry = new URL(match[1], BASE);
+      entry.protocol = new URL(BASE).protocol;
+      entry.host = new URL(BASE).host;
+      return internalUrl(entry.href, BASE);
+    })
     .filter(Boolean);
 
   if (seeds.length === 0) {
