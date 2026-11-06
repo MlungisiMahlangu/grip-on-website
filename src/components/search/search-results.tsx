@@ -127,7 +127,7 @@ export function SearchResultGrid({
           </div>
           <div className="mt-3 flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="truncate font-sans text-body font-semibold uppercase tracking-[0.06em] text-bone">
+              <h2 className="line-clamp-2 font-sans text-body font-semibold uppercase tracking-[0.06em] text-bone">
                 {result.name}
               </h2>
               <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.16em] text-bone-dim">

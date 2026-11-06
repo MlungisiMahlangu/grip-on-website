@@ -4,7 +4,7 @@ export const SITE = {
   name: BUSINESS.name,
   tagline: "Grip on the work.",
   description:
-    "Gym apparel built for the work. Student-founded in Johannesburg, made in small runs and delivered across South Africa.",
+    "Gym apparel built for the work. Made in Johannesburg, in small runs, delivered across South Africa.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://griponwear.co.za",
   email: BUSINESS.email,
   phone: BUSINESS.phone,

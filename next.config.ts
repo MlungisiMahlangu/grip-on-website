@@ -35,6 +35,8 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   },
   { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
   ...(isProduction
     ? [
         {

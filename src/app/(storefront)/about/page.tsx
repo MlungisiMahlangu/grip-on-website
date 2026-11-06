@@ -10,7 +10,7 @@ import { SITE } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Our story",
   description:
-    "Grip On is gym apparel built for the work: student-founded in Johannesburg, made in small runs and delivered across South Africa.",
+    "Grip On is gym apparel built for the work: made in Johannesburg in small runs and delivered across South Africa.",
   alternates: { canonical: "/about" },
 };
 
@@ -79,7 +79,7 @@ export default async function AboutPage() {
                 else.
               </p>
               <p>
-                So we made our own. Student-founded, self-funded and built in small runs. Heavy
+                So we made our own. Self-funded and built in small runs. Heavy
                 enough to train in, plain enough to wear anywhere, priced so you can buy it without
                 thinking twice.
               </p>

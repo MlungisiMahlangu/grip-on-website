@@ -29,8 +29,8 @@ export function SiteFooter({
               <Wordmark className="h-7" />
             </div>
             <p className="mt-6 max-w-sm text-body leading-relaxed text-bone-dim">
-              Gym apparel built for the work. Student-founded in Johannesburg, made in small runs
-              and delivered across South Africa.
+              Gym apparel built for the work. Made in Johannesburg, in small runs and delivered
+              across South Africa.
             </p>
             {instagram ? (
               <a

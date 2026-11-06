@@ -93,9 +93,8 @@ export default async function TermsPage() {
       body: (
         <>
           <p>
-            All prices are shown in South African rand and include VAT where it applies. The price
-            you see on a product page is the price used at checkout, subject to the delivery terms
-            explained there.
+            All prices are shown in South African rand. The price you see on a product page is the
+            price used at checkout, subject to the delivery terms explained there.
           </p>
           <p>
             We try to keep prices and stock accurate. If a price is listed incorrectly, we may

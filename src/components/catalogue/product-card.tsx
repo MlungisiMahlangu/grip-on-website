@@ -67,7 +67,7 @@ export function ProductCard({
 
         <div className="mt-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="truncate font-sans text-body font-semibold uppercase tracking-[0.06em] text-bone">
+            <h2 className="line-clamp-2 font-sans text-body font-semibold uppercase tracking-[0.06em] text-bone">
               {product.name}
             </h2>
             {product.tagline ? (

@@ -39,7 +39,7 @@ export default async function HomePage() {
 
         <div className="container-x relative z-10 pb-12 pt-32 sm:pb-16 lg:pb-20">
           <p className="eyebrow animate-fade text-accent" style={{ animationDelay: "80ms" }}>
-            Student-founded · Johannesburg
+            Made in Johannesburg
           </p>
           <h1 className="display mt-5 max-w-5xl text-hero">
             <span className="block animate-rise" style={{ animationDelay: "140ms" }}>

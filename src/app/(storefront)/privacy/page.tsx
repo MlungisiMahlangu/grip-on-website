@@ -65,7 +65,7 @@ export default async function PrivacyPage() {
             <li>To contact you if there is a problem with stock, payment or delivery.</li>
             <li>To answer messages and process returns or refunds.</li>
             <li>To send occasional new-gear emails, only if you opted in.</li>
-            <li>To keep the records we need for tax, accounting and consumer-law purposes.</li>
+            <li>To keep the records we need for consumer-law purposes.</li>
             <li>To prevent fraudulent or abusive orders.</li>
           </ul>
           <p>
@@ -93,8 +93,8 @@ export default async function PrivacyPage() {
               packing and delivering your order, and handling returns.
             </li>
             <li>
-              <strong className="font-medium text-bone">Legal obligations:</strong> keeping tax,
-              accounting and consumer records for the required periods.
+              <strong className="font-medium text-bone">Legal obligations:</strong> keeping
+              consumer records for the required periods.
             </li>
             <li>
               <strong className="font-medium text-bone">Consent:</strong> sending marketing emails,
@@ -134,9 +134,9 @@ export default async function PrivacyPage() {
       body: (
         <>
           <p>
-            Order records are kept for at least five years to meet South African tax and consumer
-            record requirements. Subscriber details are kept until you opt out. Contact messages are
-            kept until the query is resolved, then archived or deleted.
+            Order records are kept for as long as needed to handle returns, refunds and consumer
+            queries. Subscriber details are kept until you opt out. Contact messages are kept until
+            the query is resolved, then archived or deleted.
           </p>
           <p>
             When information is no longer needed, we delete it or remove the details that identify
@@ -179,29 +179,9 @@ export default async function PrivacyPage() {
               {contactEmail}
             </a>{" "}
             and we will respond within a reasonable time. We may need to verify your identity before
-            we act. Some records, such as completed order and tax records, cannot be deleted before
-            their retention period ends.
+            we act.
           </p>
-          <p>
-            If you are not satisfied with our response, you can complain to the Information
-            Regulator (South Africa) at{" "}
-            <a
-              href="https://inforeg.org.za"
-              target="_blank"
-              rel="noreferrer"
-              className="prose-link text-bone underline underline-offset-2"
-            >
-              inforeg.org.za
-            </a>{" "}
-            or{" "}
-            <a
-              href="mailto:complaints.IR@justice.gov.za"
-              className="prose-link text-bone underline underline-offset-2"
-            >
-              complaints.IR@justice.gov.za
-            </a>
-            .
-          </p>
+
         </>
       ),
     },
@@ -216,9 +196,8 @@ export default async function PrivacyPage() {
           </p>
           <p>
             No system is perfectly secure. If we become aware of a breach that affects your
-            information, we will notify you and the Information Regulator as POPIA requires. If you
-            spot a security problem, email us and give us a chance to fix it before sharing it
-            publicly.
+            information, we will notify you as soon as possible. If you spot a security problem,
+            email us and give us a chance to fix it before sharing it publicly.
           </p>
         </>
       ),

@@ -7,7 +7,6 @@ import { DeferredCartDrawer } from "@/components/cart/deferred-cart-drawer";
 import { StorefrontSettingsProvider } from "@/components/providers/storefront-settings-provider";
 import { ScrollToTop } from "@/components/layout/scroll-to-top";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
-import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import { BUSINESS } from "@/lib/business";
 import { SITE } from "@/lib/site";
 
@@ -54,7 +53,6 @@ export function StorefrontShell({
       />
       <DeferredMobileMenu />
       <DeferredCartDrawer />
-      <WhatsAppButton />
     </StorefrontSettingsProvider>
   );
 }
